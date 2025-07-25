@@ -1,4 +1,5 @@
-import type { IconStatus, IconCacheEntry, IconCacheStats, CachedIconConfig } from '../types'
+import { IconStatus } from '../types'
+import type { IconCacheEntry, IconCacheStats, CachedIconConfig } from '../types'
 
 /**
  * 图标缓存管理器

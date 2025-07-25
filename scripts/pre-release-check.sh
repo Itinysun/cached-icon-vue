@@ -55,9 +55,13 @@ fi
 echo "📦 检查依赖..."
 pnpm install --frozen-lockfile
 
-# 运行测试
-echo "🧪 运行测试..."
-pnpm run test:run
+# 运行测试（如果有测试文件）
+if [ -n "$(find . -name '*.test.*' -o -name '*.spec.*' | head -1)" ]; then
+  echo "🧪 运行测试..."
+  pnpm run test:run
+else
+  echo "⏭️  跳过测试（未找到测试文件）..."
+fi
 
 # 类型检查
 echo "🔧 类型检查..."

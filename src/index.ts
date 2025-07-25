@@ -12,18 +12,22 @@ export { iconCache, IconCacheManager } from './utils/iconCache'
 export { iconDownloader, IconDownloader } from './utils/iconDownloader'
 
 // 导出 Vite 插件
-export { vitePluginCachedIcon, default as VitePluginCachedIcon } from './vite-plugin'
+export { vitePluginCachedIcon } from './vite-plugin'
+export { default as VitePluginCachedIcon } from './vite-plugin'
 
-// 导出类型
+// 导入用于默认导出
+import { vitePluginCachedIcon } from './vite-plugin'
+
+// 导出类型和枚举
 export type {
   CachedIconProps,
   IconDownloadResult,
-  IconStatus,
   IconCacheEntry,
   IconCacheStats,
   CachedIconConfig,
   IconDownloaderOptions,
 } from './types'
+export { IconStatus } from './types'
 
 // 插件安装函数
 export const install = (app: App, options?: any) => {
@@ -41,7 +45,7 @@ export const install = (app: App, options?: any) => {
 }
 
 // 默认导出
-export default {
+const CachedIconVue = {
   install,
   CachedIcon,
   LoadingIcon,
@@ -49,3 +53,5 @@ export default {
   DefaultIcon,
   vitePluginCachedIcon,
 }
+
+export default CachedIconVue

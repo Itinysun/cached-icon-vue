@@ -167,7 +167,9 @@ async function downloadFromIconify(iconName: string): Promise<string | null> {
     let name = ''
     
     if (iconName.includes(':')) {
-      [collection, name] = iconName.split(':')
+      const parts = iconName.split(':')
+      collection = parts[0] || 'mdi'
+      name = parts[1] || iconName
     } else if (iconName.includes('-')) {
       // 尝试从常见的集合中猜测
       const commonCollections = ['mdi', 'ic', 'heroicons', 'tabler', 'carbon', 'fa', 'material-symbols']

@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import dts from 'vite-plugin-dts'
 import { resolve } from 'node:path'
+/// <reference types="vitest" />
 
 export default defineConfig({
   plugins: [
@@ -21,25 +22,45 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: 'lib',
     lib: {
-      entry: resolve(import.meta.dirname, 'src/index.ts'),
-      name: 'CachedIconVue',
+      entry: {
+        index: resolve(import.meta.dirname, 'src/index.ts'),
+        'vite-plugin/index': resolve(import.meta.dirname, 'src/vite-plugin/index.ts'),
+      },
       formats: ['es', 'cjs'],
-      fileName: (format) => `index.${format === 'es' ? 'js' : 'cjs'}`,
     },
     rollupOptions: {
-      external: ['vue', 'vite'],
-      output: {
-        globals: {
-          vue: 'Vue',
-          vite: 'Vite',
-        },
+      external: (id) => {
+        // Vue 组件相关的外部依赖
+        if (id === 'vue') return true
+        
+        // Vite 插件相关的外部依赖
+        if (id === 'vite') return true
+        if (id.startsWith('node:')) return true
+        if (id === 'fs' || id === 'path') return true
+        
+        return false
       },
+      output: [
+        {
+          format: 'es',
+          entryFileNames: '[name].js',
+          chunkFileNames: '[name].js',
+        },
+        {
+          format: 'cjs',
+          entryFileNames: '[name].cjs',
+          chunkFileNames: '[name].cjs',
+          exports: 'named',
+        },
+      ],
     },
     sourcemap: true,
     minify: false,
     target: 'esnext',
   },
+  // @ts-ignore - test configuration for vitest
   test: {
     environment: 'jsdom',
     globals: true,
