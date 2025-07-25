@@ -236,8 +236,7 @@ export class IconCacheManager {
     if (!this.config.isDevelopment()) return
 
     const existingEntries = Array.from(this.cache.entries()).filter(
-      ([_, entry]) =>
-        entry.status === IconStatus.EXISTS || entry.status === IconStatus.DOWNLOADED
+      ([_, entry]) => entry.status === IconStatus.EXISTS || entry.status === IconStatus.DOWNLOADED
     )
 
     for (const [iconName] of existingEntries) {

@@ -6,7 +6,7 @@ import type { IconDownloaderOptions } from '../types'
 const defaultOptions: Required<IconDownloaderOptions> = {
   iconDir: 'public/icons',
   iconSource: 'iconify',
-  customUrlTemplate: ''
+  customUrlTemplate: '',
 }
 
 /**
@@ -14,7 +14,7 @@ const defaultOptions: Required<IconDownloaderOptions> = {
  */
 export function vitePluginCachedIcon(options: IconDownloaderOptions = {}): Plugin {
   const opts = { ...defaultOptions, ...options }
-  
+
   return {
     name: 'vite-plugin-cached-icon',
     configureServer(server) {
@@ -27,7 +27,7 @@ export function vitePluginCachedIcon(options: IconDownloaderOptions = {}): Plugi
           res.setHeader('Access-Control-Allow-Origin', '*')
           res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
           res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
-          
+
           if (req.method === 'OPTIONS') {
             res.statusCode = 200
             res.end()
@@ -71,12 +71,12 @@ export function vitePluginCachedIcon(options: IconDownloaderOptions = {}): Plugi
           res.end(JSON.stringify({ error: 'Internal server error' }))
         }
       })
-    }
+    },
   }
 }
 
 async function processIconRequest(
-  iconName: string, 
+  iconName: string,
   opts: Required<IconDownloaderOptions>,
   res: any,
   root: string
@@ -96,15 +96,17 @@ async function processIconRequest(
   if (existsSync(iconPath)) {
     // 读取现有的SVG内容
     const existingSvgContent = readFileSync(iconPath, 'utf8')
-    
+
     res.statusCode = 200
-    res.end(JSON.stringify({ 
-      success: true, 
-      message: 'Icon already exists locally',
-      path: iconPath,
-      exists: true,
-      svgContent: existingSvgContent // 返回现有的SVG内容
-    }))
+    res.end(
+      JSON.stringify({
+        success: true,
+        message: 'Icon already exists locally',
+        path: iconPath,
+        exists: true,
+        svgContent: existingSvgContent, // 返回现有的SVG内容
+      })
+    )
     return
   }
 
@@ -116,47 +118,56 @@ async function processIconRequest(
   try {
     // 下载图标
     const svgContent = await downloadIcon(iconName, opts)
-    
+
     if (!svgContent) {
       res.statusCode = 404
-      res.end(JSON.stringify({ 
-        success: false,
-        error: 'Icon not found',
-        exists: false
-      }))
+      res.end(
+        JSON.stringify({
+          success: false,
+          error: 'Icon not found',
+          exists: false,
+        })
+      )
       return
     }
 
     // 保存到本地
     writeFileSync(iconPath, svgContent)
-    
+
     res.statusCode = 200
-    res.end(JSON.stringify({ 
-      success: true, 
-      message: 'Icon downloaded successfully',
-      path: iconPath,
-      exists: false,
-      downloaded: true,
-      svgContent: svgContent // 返回SVG内容
-    }))
+    res.end(
+      JSON.stringify({
+        success: true,
+        message: 'Icon downloaded successfully',
+        path: iconPath,
+        exists: false,
+        downloaded: true,
+        svgContent: svgContent, // 返回SVG内容
+      })
+    )
   } catch (error) {
     res.statusCode = 500
-    res.end(JSON.stringify({ 
-      success: false,
-      error: 'Failed to download icon',
-      details: error instanceof Error ? error.message : 'Unknown error',
-      exists: false
-    }))
+    res.end(
+      JSON.stringify({
+        success: false,
+        error: 'Failed to download icon',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        exists: false,
+      })
+    )
   }
 }
 
-async function downloadIcon(iconName: string, opts: Required<IconDownloaderOptions>): Promise<string | null> {
+async function downloadIcon(
+  iconName: string,
+  opts: Required<IconDownloaderOptions>
+): Promise<string | null> {
   if (opts.iconSource === 'iconify') {
     return await downloadFromIconify(iconName)
   } else if (opts.customUrlTemplate) {
     return await downloadFromCustomUrl(iconName, opts.customUrlTemplate)
   }
-  
+
   throw new Error('No valid icon source configured')
 }
 
@@ -165,15 +176,23 @@ async function downloadFromIconify(iconName: string): Promise<string | null> {
     // 支持多种iconify格式: mdi:home, mdi-home, ic:round-home等
     let collection = ''
     let name = ''
-    
+
     if (iconName.includes(':')) {
       const parts = iconName.split(':')
       collection = parts[0] || 'mdi'
       name = parts[1] || iconName
     } else if (iconName.includes('-')) {
       // 尝试从常见的集合中猜测
-      const commonCollections = ['mdi', 'ic', 'heroicons', 'tabler', 'carbon', 'fa', 'material-symbols']
-      
+      const commonCollections = [
+        'mdi',
+        'ic',
+        'heroicons',
+        'tabler',
+        'carbon',
+        'fa',
+        'material-symbols',
+      ]
+
       for (const col of commonCollections) {
         if (iconName.startsWith(col + '-')) {
           collection = col
@@ -181,7 +200,7 @@ async function downloadFromIconify(iconName: string): Promise<string | null> {
           break
         }
       }
-      
+
       if (!collection) {
         // 默认使用mdi
         collection = 'mdi'
@@ -193,49 +212,52 @@ async function downloadFromIconify(iconName: string): Promise<string | null> {
     }
 
     const url = `https://api.iconify.design/${collection}/${name}.svg`
-    
+
     const response = await fetch(url)
-    
+
     if (!response.ok) {
       if (response.status === 404) {
         return null
       }
       throw new Error(`HTTP ${response.status}: ${response.statusText}`)
     }
-    
+
     const svgContent = await response.text()
-    
+
     // 验证是否为有效的SVG
     if (!svgContent.includes('<svg')) {
       throw new Error('Invalid SVG content')
     }
-    
+
     return svgContent
   } catch (error) {
     throw error
   }
 }
 
-async function downloadFromCustomUrl(iconName: string, urlTemplate: string): Promise<string | null> {
+async function downloadFromCustomUrl(
+  iconName: string,
+  urlTemplate: string
+): Promise<string | null> {
   try {
     const url = urlTemplate.replace('{name}', iconName)
     console.log(`📥 Downloading from custom URL: ${url}`)
-    
+
     const response = await fetch(url)
-    
+
     if (!response.ok) {
       if (response.status === 404) {
         return null
       }
       throw new Error(`HTTP ${response.status}: ${response.statusText}`)
     }
-    
+
     const svgContent = await response.text()
-    
+
     if (!svgContent.includes('<svg')) {
       throw new Error('Invalid SVG content')
     }
-    
+
     return svgContent
   } catch (error) {
     console.error(`Failed to download from custom URL:`, error)

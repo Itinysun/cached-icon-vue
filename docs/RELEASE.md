@@ -41,6 +41,7 @@ pnpm run release
 ```
 
 交互式发布会提示：
+
 - 选择版本类型（patch/minor/major/prerelease）
 - 确认变更日志
 - 确认发布信息
@@ -53,6 +54,7 @@ pnpm run release:dry
 ```
 
 这会显示：
+
 - 将要执行的操作
 - 生成的变更日志
 - Git 标签和提交信息
@@ -93,7 +95,7 @@ git push origin main
 1.0.0 → 1.0.1 (patch)
 
 # 新增功能
-1.0.0 → 1.1.0 (minor)  
+1.0.0 → 1.1.0 (minor)
 
 # 破坏性变更
 1.0.0 → 2.0.0 (major)
@@ -109,7 +111,7 @@ git push origin main
 发布前请确认：
 
 - [ ] 所有测试通过
-- [ ] 代码检查通过 
+- [ ] 代码检查通过
 - [ ] 类型检查通过
 - [ ] 文档已更新
 - [ ] CHANGELOG 准确反映变更
@@ -150,18 +152,21 @@ git push origin :refs/tags/v1.0.1
 ### 常见问题
 
 1. **npm 权限错误**
+
    ```bash
    npm whoami
    npm access list packages
    ```
 
 2. **Git 权限错误**
+
    ```bash
    git config --list
    ssh -T git@github.com
    ```
 
 3. **版本冲突**
+
    ```bash
    git fetch --tags
    git tag -l
@@ -177,6 +182,7 @@ git push origin :refs/tags/v1.0.1
 ### 联系方式
 
 如遇问题，请：
+
 - 提交 GitHub Issue
 - 检查 Actions 日志
 - 查看 npm 发布日志
@@ -184,6 +190,7 @@ git push origin :refs/tags/v1.0.1
 ## 发布历史
 
 发布历史记录在以下位置：
+
 - [CHANGELOG.md](../CHANGELOG.md) - 详细变更日志
 - [GitHub Releases](https://github.com/your-repo/releases) - 发布页面
 - [npm 版本历史](https://www.npmjs.com/package/cached-icon-vue?activeTab=versions) - npm 页面

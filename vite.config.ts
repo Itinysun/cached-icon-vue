@@ -31,15 +31,15 @@ export default defineConfig({
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
-      external: (id) => {
+      external: id => {
         // Vue 组件相关的外部依赖
         if (id === 'vue') return true
-        
+
         // Vite 插件相关的外部依赖
         if (id === 'vite') return true
         if (id.startsWith('node:')) return true
         if (id === 'fs' || id === 'path') return true
-        
+
         return false
       },
       output: [
@@ -64,5 +64,25 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    include: [
+      'tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+      '__tests__/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+    ],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      exclude: [
+        'node_modules/',
+        'lib/',
+        'dist/',
+        'tests/',
+        'examples/',
+        'scripts/',
+        'docs/',
+        'vite.config.ts',
+        'eslint.config.js',
+        '*.d.ts',
+      ],
+    },
   },
 })

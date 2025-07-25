@@ -1,7 +1,7 @@
 <template>
   <div class="examples-container">
     <h1>CachedIcon 基础用法示例</h1>
-    
+
     <section class="example-section">
       <h2>基础用法</h2>
       <div class="icon-grid">
@@ -38,15 +38,15 @@
     <section class="example-section">
       <h2>颜色继承</h2>
       <div class="color-demo">
-        <div style="color: red;">
+        <div style="color: red">
           <CachedIcon name="mdi:heart" size="32px" />
           红色
         </div>
-        <div style="color: blue;">
+        <div style="color: blue">
           <CachedIcon name="mdi:star" size="32px" />
           蓝色
         </div>
-        <div style="color: green;">
+        <div style="color: green">
           <CachedIcon name="mdi:check" size="32px" />
           绿色
         </div>
@@ -65,10 +65,7 @@
           <span>错误状态</span>
         </div>
         <div class="state-item">
-          <CachedIcon 
-            name="another-non-existing" 
-            :show-error-state="false" 
-          />
+          <CachedIcon name="another-non-existing" :show-error-state="false" />
           <span>隐藏错误状态</span>
         </div>
       </div>

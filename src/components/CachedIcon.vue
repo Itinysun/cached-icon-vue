@@ -123,16 +123,10 @@ const createSvgComponent = (svgContent: string) => {
             'path, circle, rect, polygon, polyline, line, ellipse'
           )
           elements.forEach((element: any) => {
-            if (
-              element.getAttribute('fill') &&
-              element.getAttribute('fill') !== 'none'
-            ) {
+            if (element.getAttribute('fill') && element.getAttribute('fill') !== 'none') {
               element.setAttribute('fill', 'currentColor')
             }
-            if (
-              element.getAttribute('stroke') &&
-              element.getAttribute('stroke') !== 'none'
-            ) {
+            if (element.getAttribute('stroke') && element.getAttribute('stroke') !== 'none') {
               element.setAttribute('stroke', 'currentColor')
             }
           })
@@ -278,9 +272,7 @@ const loadIcon = async (name: string) => {
           : '图标不存在（自动下载仅在开发环境可用）'
       )
       hasError.value = true
-      errorMessage.value = config.isDevelopment?.()
-        ? '图标不存在'
-        : '图标不存在'
+      errorMessage.value = config.isDevelopment?.() ? '图标不存在' : '图标不存在'
     }
 
     return false
@@ -340,7 +332,7 @@ onMounted(() => {
 defineExpose({
   updateConfig: (newConfig: Partial<CachedIconConfig>) => {
     Object.assign(config, newConfig)
-  }
+  },
 })
 </script>
 

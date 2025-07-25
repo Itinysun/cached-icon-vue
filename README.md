@@ -37,9 +37,9 @@ export default defineConfig({
     vue(),
     // 配置图标下载插件
     vitePluginCachedIcon({
-      iconDir: 'public/icons',        // 图标保存目录
-      iconSource: 'iconify',          // 图标来源：iconify 或 custom
-      customUrlTemplate: ''           // 自定义URL模板（可选）
+      iconDir: 'public/icons', // 图标保存目录
+      iconSource: 'iconify', // 图标来源：iconify 或 custom
+      customUrlTemplate: '', // 自定义URL模板（可选）
     }),
   ],
 })
@@ -59,7 +59,7 @@ app.use(CachedIconVue, {
   // 可选配置
   isDevelopment: () => process.env.NODE_ENV === 'development',
   iconPathPrefix: '/icons',
-  downloadApiEndpoint: '/api/download-icon'
+  downloadApiEndpoint: '/api/download-icon',
 })
 
 app.mount('#app')
@@ -83,44 +83,33 @@ import { CachedIcon } from 'cached-icon-vue'
 <template>
   <!-- 基础使用 -->
   <CachedIcon name="mdi:home" />
-  
+
   <!-- 自定义尺寸 -->
   <CachedIcon name="mdi:star" size="32px" />
   <CachedIcon name="mdi:heart" :size="24" />
-  
+
   <!-- 自定义样式 -->
-  <CachedIcon 
-    name="mdi:settings" 
-    class="text-blue-500 hover:text-blue-600" 
-    size="20px"
-  />
-  
+  <CachedIcon name="mdi:settings" class="text-blue-500 hover:text-blue-600" size="20px" />
+
   <!-- 禁用自动下载 -->
-  <CachedIcon 
-    name="mdi:user" 
-    :auto-download="false" 
-  />
-  
+  <CachedIcon name="mdi:user" :auto-download="false" />
+
   <!-- 隐藏状态指示器 -->
-  <CachedIcon 
-    name="mdi:search" 
-    :show-loading-state="false"
-    :show-error-state="false"
-  />
+  <CachedIcon name="mdi:search" :show-loading-state="false" :show-error-state="false" />
 </template>
 ```
 
 ## Props
 
-| 属性 | 类型 | 默认值 | 描述 |
-|------|------|--------|------|
-| `name` | `string` | `'mdi:alert-circle'` | 图标名称 |
-| `icon` | `string` | `''` | 图标名称（同 name，优先级更高） |
-| `size` | `string \| number` | `'1em'` | 图标尺寸 |
-| `class` | `string` | `''` | 自定义 CSS 类名 |
-| `autoDownload` | `boolean` | `true` | 是否自动下载不存在的图标（仅开发环境） |
-| `showLoadingState` | `boolean` | `true` | 是否显示加载状态 |
-| `showErrorState` | `boolean` | `true` | 是否显示错误状态 |
+| 属性               | 类型               | 默认值               | 描述                                   |
+| ------------------ | ------------------ | -------------------- | -------------------------------------- |
+| `name`             | `string`           | `'mdi:alert-circle'` | 图标名称                               |
+| `icon`             | `string`           | `''`                 | 图标名称（同 name，优先级更高）        |
+| `size`             | `string \| number` | `'1em'`              | 图标尺寸                               |
+| `class`            | `string`           | `''`                 | 自定义 CSS 类名                        |
+| `autoDownload`     | `boolean`          | `true`               | 是否自动下载不存在的图标（仅开发环境） |
+| `showLoadingState` | `boolean`          | `true`               | 是否显示加载状态                       |
+| `showErrorState`   | `boolean`          | `true`               | 是否显示错误状态                       |
 
 ## 高级用法
 
@@ -135,20 +124,21 @@ export default defineConfig({
     // 基础配置
     vitePluginCachedIcon({
       iconDir: 'public/icons',
-      iconSource: 'iconify'
+      iconSource: 'iconify',
     }),
-    
+
     // 或者使用自定义图标源
     vitePluginCachedIcon({
       iconDir: 'public/custom-icons',
       iconSource: 'custom',
-      customUrlTemplate: 'https://your-icon-cdn.com/{name}.svg'
+      customUrlTemplate: 'https://your-icon-cdn.com/{name}.svg',
     }),
   ],
 })
 ```
 
 插件会在开发环境下提供 `/api/download-icon` API 端点，支持：
+
 - GET 请求：`/api/download-icon?name=mdi:home`
 - POST 请求：`{ "name": "mdi:home" }`
 - 自动保存图标到指定目录
@@ -170,7 +160,7 @@ iconCache.clear('mdi:home')
 const customCache = new IconCacheManager({
   isDevelopment: () => true,
   cacheExpireTime: 12 * 60 * 60 * 1000, // 12小时
-  iconPathPrefix: '/custom-icons'
+  iconPathPrefix: '/custom-icons',
 })
 ```
 
@@ -210,7 +200,7 @@ iconCache.clear('mdi:home') // 清除特定图标
 - ✅ 成功加载的图标会被永久缓存（直到手动清除）
 - ⏰ 失败的请求有重试机制，30秒后可重试
 - 🗑️ 缓存会自动清理过期条目（默认24小时）
-- 💾  支持本地存储持久化
+- 💾 支持本地存储持久化
 
 ## 状态管理
 
@@ -264,9 +254,9 @@ interface CachedIconConfig {
 }
 
 interface IconDownloaderOptions {
-  iconDir?: string                    // SVG图标保存目录
-  iconSource?: 'iconify' | 'custom'   // 图标下载源
-  customUrlTemplate?: string          // 自定义下载URL模板
+  iconDir?: string // SVG图标保存目录
+  iconSource?: 'iconify' | 'custom' // 图标下载源
+  customUrlTemplate?: string // 自定义下载URL模板
 }
 ```
 
@@ -280,9 +270,9 @@ function vitePluginCachedIcon(options?: IconDownloaderOptions): Plugin
 
 // 使用示例
 vitePluginCachedIcon({
-  iconDir: 'public/icons',           // 默认: 'public/icons'
-  iconSource: 'iconify',             // 默认: 'iconify'
-  customUrlTemplate: '{name}.svg'    // 仅当 iconSource 为 'custom' 时使用
+  iconDir: 'public/icons', // 默认: 'public/icons'
+  iconSource: 'iconify', // 默认: 'iconify'
+  customUrlTemplate: '{name}.svg', // 仅当 iconSource 为 'custom' 时使用
 })
 ```
 
@@ -380,7 +370,7 @@ pnpm run release:dry
 
 ```bash
 feat: 新增功能
-fix: 修复 bug  
+fix: 修复 bug
 docs: 文档更新
 style: 代码格式调整
 refactor: 重构代码

@@ -6,13 +6,13 @@ import { vitePluginCachedIcon } from 'cached-icon-vue'
 export default defineConfig({
   plugins: [
     vue(),
-    
+
     // 基础配置 - 从 Iconify 下载图标
     vitePluginCachedIcon({
-      iconDir: 'public/icons',        // 图标保存目录
-      iconSource: 'iconify',          // 使用 Iconify API
+      iconDir: 'public/icons', // 图标保存目录
+      iconSource: 'iconify', // 使用 Iconify API
     }),
-    
+
     // 高级配置 - 使用自定义图标源
     // vitePluginCachedIcon({
     //   iconDir: 'public/custom-icons',
@@ -20,14 +20,14 @@ export default defineConfig({
     //   customUrlTemplate: 'https://your-icon-cdn.com/icons/{name}.svg'
     // }),
   ],
-  
+
   // Vite 6.x 配置
   server: {
     port: 5173,
     open: true,
     host: true,
   },
-  
+
   build: {
     outDir: 'dist',
     sourcemap: true,
@@ -38,7 +38,7 @@ export default defineConfig({
       },
     },
   },
-  
+
   // 现代化优化
   optimizeDeps: {
     include: ['vue'],

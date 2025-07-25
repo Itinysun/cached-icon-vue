@@ -9,12 +9,14 @@
 ## 如何运行示例
 
 1. 在包目录中安装依赖：
+
 ```bash
 cd /path/to/cached-icon-vue
 pnpm install
 ```
 
 2. 构建包：
+
 ```bash
 pnpm build
 ```
@@ -34,8 +36,8 @@ import { CachedIcon } from 'cached-icon-vue'
 
 export default {
   components: {
-    CachedIcon
-  }
+    CachedIcon,
+  },
 }
 </script>
 ```
