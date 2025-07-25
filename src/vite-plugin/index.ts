@@ -68,10 +68,12 @@ export function vitePluginCachedIcon(options: IconDownloaderOptions = {}): Plugi
         } catch (error) {
           console.error('Icon downloader error:', error)
           res.statusCode = 500
-          res.end(JSON.stringify({ 
-            error: 'Internal server error',
-            details: error instanceof Error ? error.message : 'Unknown error'
-          }))
+          res.end(
+            JSON.stringify({
+              error: 'Internal server error',
+              details: error instanceof Error ? error.message : 'Unknown error',
+            })
+          )
         }
       })
     },

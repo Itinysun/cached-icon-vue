@@ -117,7 +117,10 @@ export class IconCacheManager {
   /**
    * 标记图标为正在下载
    */
-  markAsDownloading(iconName: string, downloadPromise: Promise<IconDownloadResult>): IconCacheEntry {
+  markAsDownloading(
+    iconName: string,
+    downloadPromise: Promise<IconDownloadResult>
+  ): IconCacheEntry {
     return this.updateStatus(iconName, IconStatus.DOWNLOADING, { downloadPromise })
   }
 
@@ -238,7 +241,8 @@ export class IconCacheManager {
 
     const existingEntries = Array.from(this.cache.entries()).filter(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      ([_iconName, entry]) => entry.status === IconStatus.EXISTS || entry.status === IconStatus.DOWNLOADED
+      ([_iconName, entry]) =>
+        entry.status === IconStatus.EXISTS || entry.status === IconStatus.DOWNLOADED
     )
 
     for (const [iconName] of existingEntries) {
