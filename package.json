@@ -1,0 +1,99 @@
+{
+  "name": "cached-icon-vue",
+  "version": "1.0.0",
+  "description": "一个高性能的 Vue 3 图标组件，支持 SVG 缓存、自动下载和智能状态管理",
+  "type": "module",
+  "main": "./lib/index.js",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./lib/index.js",
+      "require": "./lib/index.cjs",
+      "types": "./lib/index.d.ts"
+    },
+    "./style.css": "./lib/style.css"
+  },
+  "files": [
+    "lib",
+    "src",
+    "*.md",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "build": "vite build",
+    "build:watch": "vite build --watch",
+    "dev": "vite build --watch",
+    "typecheck": "vue-tsc --noEmit",
+    "lint": "eslint . --fix",
+    "lint:check": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "clean": "rm -rf lib dist node_modules/.cache",
+    "pre-release": "./scripts/pre-release-check.sh",
+    "release": "pnpm run pre-release && release-it",
+    "release:dry": "release-it --dry-run",
+    "release:ci": "release-it --ci",
+    "prepublishOnly": "pnpm run clean && pnpm run typecheck && pnpm run lint:check && pnpm run test:run && pnpm run build"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "icon",
+    "svg",
+    "cache",
+    "performance",
+    "typescript",
+    "component"
+  ],
+  "author": "您的名字 <your-email@example.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/cached-icon-vue.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/cached-icon-vue/issues"
+  },
+  "homepage": "https://github.com/your-username/cached-icon-vue#readme",
+  "peerDependencies": {
+    "vue": "^3.5.0",
+    "vite": "^6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vite": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "@vue/test-utils": "^2.4.0",
+    "eslint": "^9.0.0",
+    "eslint-plugin-vue": "^9.30.0",
+    "jsdom": "^25.0.0",
+    "prettier": "^3.3.0",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0",
+    "vite-plugin-dts": "^4.3.0",
+    "vitest": "^2.1.0",
+    "vue": "^3.5.0",
+    "vue-tsc": "^2.1.0",
+    "release-it": "^17.8.2",
+    "@release-it/conventional-changelog": "^8.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

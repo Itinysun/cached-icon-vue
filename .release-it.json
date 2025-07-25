@@ -1,0 +1,60 @@
+{
+  "git": {
+    "commitMessage": "chore: release v${version}",
+    "tagName": "v${version}",
+    "tagAnnotation": "Release v${version}",
+    "push": true,
+    "pushArgs": ["--follow-tags"],
+    "requireCleanWorkingDir": true,
+    "requireBranch": ["main", "master"],
+    "addUntrackedFiles": false
+  },
+  "github": {
+    "release": true,
+    "releaseName": "v${version}",
+    "releaseNotes": null,
+    "autoGenerate": true,
+    "draft": false,
+    "preRelease": false,
+    "assets": []
+  },
+  "npm": {
+    "publish": true,
+    "publishPath": ".",
+    "access": "public",
+    "otp": null,
+    "ignoreVersion": false,
+    "skipChecks": false
+  },
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": "angular",
+      "infile": "CHANGELOG.md",
+      "header": "# Changelog\n\n所有重要的变更都会记录在这个文件中。\n\n格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，\n并且本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。\n"
+    }
+  },
+  "hooks": {
+    "before:init": [
+      "pnpm run lint:check",
+      "pnpm run typecheck"
+    ],
+    "before:release": [
+      "pnpm run test:run"
+    ],
+    "after:bump": [
+      "pnpm run build"
+    ],
+    "before:git:release": [
+      "echo \"准备提交版本 ${version}\""
+    ],
+    "after:git:release": [
+      "echo \"Git 发布完成\""
+    ],
+    "before:npm:release": [
+      "echo \"准备发布到 npm\""
+    ],
+    "after:release": [
+      "echo \"🎉 成功发布版本 ${version}!\""
+    ]
+  }
+}
