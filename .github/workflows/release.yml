@@ -22,7 +22,6 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, 'chore: release')"
 
     permissions:
       contents: write
@@ -70,7 +69,9 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Release (Auto)
-        if: github.event_name == 'push'
+        if: >-
+          github.event_name == 'push' &&
+          !contains(github.event.head_commit.message, 'chore: release')
         run: pnpm run release:ci
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

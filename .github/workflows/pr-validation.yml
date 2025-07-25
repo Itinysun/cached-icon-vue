@@ -1,0 +1,130 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [main, master]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate PR
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: pnpm run typecheck
+
+      - name: Lint
+        run: pnpm run lint:check
+
+      - name: Format check
+        run: pnpm run format:check
+
+      - name: Run tests
+        run: pnpm run test:run
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Test build artifacts
+        run: |
+          ls -la lib/
+          test -f lib/index.js
+          test -f lib/index.d.ts
+          test -f lib/index.cjs
+
+      - name: Check package size
+        run: |
+          echo "📦 Package size analysis:"
+          du -sh lib/
+          du -sh lib/* | sort -hr
+
+      - name: Validate package.json
+        run: |
+          echo "🔍 Validating package.json..."
+          node -e "
+          const pkg = require('./package.json');
+          console.log('✅ Package name:', pkg.name);
+          console.log('✅ Version:', pkg.version);
+          console.log('✅ Main:', pkg.main);
+          console.log('✅ Types:', pkg.types);
+          console.log('✅ Exports:', Object.keys(pkg.exports || {}));
+          "
+
+      - name: Test installation
+        run: |
+          echo "📥 Testing package installation..."
+          cd /tmp
+          mkdir test-install
+          cd test-install
+          npm init -y
+          npm install file:${{ github.workspace }}
+          node -e "
+          try {
+            const lib = require('cached-icon-vue');
+            console.log('✅ Package installed and importable');
+          } catch (err) {
+            console.error('❌ Package import failed:', err.message);
+            process.exit(1);
+          }
+          "
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run security audit
+        run: pnpm audit --audit-level moderate
+
+      - name: Check for known vulnerabilities
+        run: |
+          echo "🔒 Checking for security vulnerabilities..."
+          pnpm audit --json > audit-result.json || true
+          if [ -s audit-result.json ]; then
+            echo "⚠️ Security audit results found"
+            cat audit-result.json
+          else
+            echo "✅ No security vulnerabilities found"
+          fi

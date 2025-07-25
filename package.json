@@ -48,6 +48,7 @@
     "release": "pnpm run pre-release && release-it",
     "release:dry": "release-it --dry-run",
     "release:ci": "release-it --ci",
+    "verify-release": "./scripts/verify-release.sh",
     "prepublishOnly": "pnpm run clean && pnpm run typecheck && pnpm run lint:check && pnpm run test:run && pnpm run build"
   },
   "keywords": [
@@ -101,7 +102,7 @@
     "vue-tsc": "^2.1.0"
   },
   "engines": {
-    "node": ">=18.0.0",
+    "node": ">=20.0.0",
     "pnpm": ">=9.0.0"
   }
 }
