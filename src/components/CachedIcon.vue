@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref, watchEffect, onMounted, h } from 'vue'
+import type { Component, VNode } from 'vue'
 import type { CachedIconProps, CachedIconConfig } from '../types'
 import { iconCache } from '../utils/iconCache'
 import { iconDownloader } from '../utils/iconDownloader'
@@ -34,11 +35,11 @@ const iconName = computed(() => props.icon || props.name)
 const isLoading = ref(false)
 const hasError = ref(false)
 const errorMessage = ref('')
-const iconComponent = ref<any>(null)
+const iconComponent = ref<Component | null>(null)
 
 // 配置对象，用户可以通过插件配置覆盖
 const config: CachedIconConfig = {
-  isDevelopment: () => process.env.NODE_ENV === 'development',
+  isDevelopment: () => import.meta.env?.DEV ?? false,
   iconPathPrefix: '/icons',
   downloadApiEndpoint: '/api/download-icon',
 }
@@ -91,7 +92,7 @@ const loadIconComponent = async (iconName: string) => {
     } else {
       return null
     }
-  } catch (error) {
+  } catch {
     return null
   }
 }
@@ -110,9 +111,9 @@ const createSvgComponent = (svgContent: string) => {
         alignItems: 'center',
         justifyContent: 'center',
       },
-      onVnodeMounted: (vnode: any) => {
+      onVnodeMounted: (vnode: VNode) => {
         // 在SVG挂载后设置属性
-        const svgElement = vnode.el?.querySelector('svg')
+        const svgElement = (vnode.el as Element)?.querySelector('svg')
         if (svgElement) {
           svgElement.setAttribute('width', '100%')
           svgElement.setAttribute('height', '100%')
@@ -122,12 +123,13 @@ const createSvgComponent = (svgContent: string) => {
           const elements = svgElement.querySelectorAll(
             'path, circle, rect, polygon, polyline, line, ellipse'
           )
-          elements.forEach((element: any) => {
-            if (element.getAttribute('fill') && element.getAttribute('fill') !== 'none') {
-              element.setAttribute('fill', 'currentColor')
+          elements.forEach((element: Element) => {
+            const svgElement = element as SVGElement
+            if (svgElement.getAttribute('fill') && svgElement.getAttribute('fill') !== 'none') {
+              svgElement.setAttribute('fill', 'currentColor')
             }
-            if (element.getAttribute('stroke') && element.getAttribute('stroke') !== 'none') {
-              element.setAttribute('stroke', 'currentColor')
+            if (svgElement.getAttribute('stroke') && svgElement.getAttribute('stroke') !== 'none') {
+              svgElement.setAttribute('stroke', 'currentColor')
             }
           })
         }
@@ -138,7 +140,7 @@ const createSvgComponent = (svgContent: string) => {
 /**
  * 从缓存中获取图标组件
  */
-const getIconFromCache = (name: string): any => {
+const getIconFromCache = (name: string): Component | null => {
   const cacheEntry = iconCache.get(name)
 
   // 优先使用iconCache中缓存的SVG内容
@@ -191,7 +193,7 @@ const loadIcon = async (name: string) => {
               return true
             }
           }
-        } catch (error) {
+        } catch {
           // 忽略下载Promise错误，继续正常流程
         }
       }

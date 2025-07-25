@@ -56,7 +56,7 @@ export function vitePluginCachedIcon(options: IconDownloaderOptions = {}): Plugi
                 const data = JSON.parse(body)
                 iconName = data.name || ''
                 await processIconRequest(iconName, opts, res, server.config.root)
-              } catch (error) {
+              } catch {
                 res.statusCode = 400
                 res.end(JSON.stringify({ error: 'Invalid JSON' }))
               }
@@ -68,7 +68,10 @@ export function vitePluginCachedIcon(options: IconDownloaderOptions = {}): Plugi
         } catch (error) {
           console.error('Icon downloader error:', error)
           res.statusCode = 500
-          res.end(JSON.stringify({ error: 'Internal server error' }))
+          res.end(JSON.stringify({ 
+            error: 'Internal server error',
+            details: error instanceof Error ? error.message : 'Unknown error'
+          }))
         }
       })
     },
@@ -78,7 +81,7 @@ export function vitePluginCachedIcon(options: IconDownloaderOptions = {}): Plugi
 async function processIconRequest(
   iconName: string,
   opts: Required<IconDownloaderOptions>,
-  res: any,
+  res: { statusCode: number; end: (data: string) => void },
   root: string
 ) {
   if (!iconName) {
@@ -231,6 +234,7 @@ async function downloadFromIconify(iconName: string): Promise<string | null> {
 
     return svgContent
   } catch (error) {
+    console.error(`Failed to download from iconify:`, error)
     throw error
   }
 }
@@ -265,5 +269,6 @@ async function downloadFromCustomUrl(
   }
 }
 
-// 导出插件
+// 导出插件 - vitePluginCachedIcon 已在上面export function中导出
+export const VitePluginCachedIcon = vitePluginCachedIcon
 export default vitePluginCachedIcon

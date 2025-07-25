@@ -37,6 +37,33 @@ export default [
     },
   },
   {
-    ignores: ['lib/', 'dist/', '*.d.ts', 'node_modules/'],
+    files: ['tests/**/*.{js,ts}', '**/*.{test,spec}.{js,ts}'],
+    languageOptions: {
+      parser: tsParser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        vi: 'readonly',
+        global: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': typescript,
+    },
+    rules: {
+      ...typescript.configs.recommended.rules,
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+    },
+  },
+  {
+    ignores: ['lib/', 'dist/', '*.d.ts', 'node_modules/', 'coverage/'],
   },
 ]

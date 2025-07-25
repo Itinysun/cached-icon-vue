@@ -26,7 +26,7 @@ export type {
 export { IconStatus } from './types'
 
 // 插件安装函数
-export const install = (app: App, options?: any) => {
+export const install = (app: App, options?: Record<string, unknown>) => {
   // 注册全局组件
   app.component('CachedIcon', CachedIcon)
   app.component('LoadingIcon', LoadingIcon)

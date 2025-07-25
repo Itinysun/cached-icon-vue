@@ -60,7 +60,7 @@ export default defineConfig({
     minify: false,
     target: 'esnext',
   },
-  // @ts-ignore - test configuration for vitest
+  // @ts-expect-error - test configuration for vitest
   test: {
     environment: 'jsdom',
     globals: true,

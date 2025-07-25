@@ -99,6 +99,7 @@
     "vite-plugin-dts": "^4.3.0",
     "vitest": "^2.1.0",
     "vue": "^3.5.0",
+    "vue-eslint-parser": "^10.2.0",
     "vue-tsc": "^2.1.0"
   },
   "engines": {

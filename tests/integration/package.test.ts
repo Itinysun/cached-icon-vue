@@ -10,11 +10,12 @@ import CachedIconVue, {
   IconCacheManager,
   iconDownloader,
   IconDownloader,
-  vitePluginCachedIcon,
-  VitePluginCachedIcon,
   IconStatus,
   install,
 } from '../../src/index'
+
+// 单独测试 Vite 插件导出
+import { vitePluginCachedIcon, VitePluginCachedIcon } from '../../src/vite-plugin/index'
 
 describe('Package Integration', () => {
   describe('主要导出', () => {
@@ -44,7 +45,8 @@ describe('Package Integration', () => {
       expect(typeof IconDownloader).toBe('function')
     })
 
-    it('应该导出 Vite 插件', () => {
+    it('Vite 插件应该单独导出（不在主包中）', () => {
+      // Vite 插件不应该在主包中导出，以避免 Node.js 模块包含在客户端代码中
       expect(vitePluginCachedIcon).toBeTruthy()
       expect(VitePluginCachedIcon).toBeTruthy()
       expect(typeof vitePluginCachedIcon).toBe('function')
@@ -138,7 +140,7 @@ describe('Package Integration', () => {
       }
 
       expect(() => {
-        install(mockApp as any)
+        install(mockApp as { component: typeof mockApp.component; provide: typeof mockApp.provide })
       }).not.toThrow()
 
       expect(mockApp.component).toHaveBeenCalledWith('CachedIcon', CachedIcon)
@@ -153,7 +155,7 @@ describe('Package Integration', () => {
       expect(CachedIconVue.LoadingIcon).toBe(LoadingIcon)
       expect(CachedIconVue.ErrorIcon).toBe(ErrorIcon)
       expect(CachedIconVue.DefaultIcon).toBe(DefaultIcon)
-      expect(CachedIconVue.vitePluginCachedIcon).toBe(vitePluginCachedIcon)
+      // Vite 插件不在默认导出中，而是单独导出
     })
   })
 
@@ -163,6 +165,7 @@ describe('Package Integration', () => {
       expect(typeof iconCache.get).toBe('function')
       expect(typeof iconCache.set).toBe('function')
       expect(typeof iconDownloader.downloadIcon).toBe('function')
+      // Vite 插件从单独的入口导出
       expect(typeof vitePluginCachedIcon).toBe('function')
     })
 

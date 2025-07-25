@@ -40,7 +40,7 @@ export interface IconCacheEntry {
   svgContent?: string
   error?: string
   lastChecked: number
-  downloadPromise?: Promise<any>
+  downloadPromise?: Promise<IconDownloadResult>
 }
 
 export interface IconCacheStats {

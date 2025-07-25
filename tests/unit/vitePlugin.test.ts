@@ -62,7 +62,7 @@ describe('vitePluginCachedIcon', () => {
         },
       }
 
-      plugin.configureServer?.(mockServer as any)
+      plugin.configureServer?.(mockServer as { config: { command: string }; middlewares: { use: typeof mockServer.middlewares.use } })
 
       expect(mockServer.middlewares.use).not.toHaveBeenCalled()
     })
@@ -76,7 +76,7 @@ describe('vitePluginCachedIcon', () => {
         },
       }
 
-      plugin.configureServer?.(mockServer as any)
+      plugin.configureServer?.(mockServer as { config: { command: string; root: string }; middlewares: { use: typeof mockServer.middlewares.use } })
 
       expect(mockServer.middlewares.use).toHaveBeenCalledWith(
         '/api/download-icon',
@@ -171,7 +171,7 @@ describe('vitePluginCachedIcon', () => {
         },
       }
 
-      plugin.configureServer?.(prodServer as any)
+      plugin.configureServer?.(prodServer as { config: { command: string }; middlewares: { use: typeof prodServer.middlewares.use } })
 
       expect(prodServer.middlewares.use).not.toHaveBeenCalled()
     })

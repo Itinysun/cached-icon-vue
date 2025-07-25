@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { IconCacheManager } from '../../src/utils/iconCache'
 import { IconStatus } from '../../src/types'
 

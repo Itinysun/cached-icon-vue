@@ -1,5 +1,5 @@
 import { IconStatus } from '../types'
-import type { IconCacheEntry, IconCacheStats, CachedIconConfig } from '../types'
+import type { IconCacheEntry, IconCacheStats, CachedIconConfig, IconDownloadResult } from '../types'
 
 /**
  * 图标缓存管理器
@@ -12,7 +12,7 @@ export class IconCacheManager {
 
   constructor(config: CachedIconConfig = {}) {
     this.config = {
-      isDevelopment: config.isDevelopment || (() => process.env.NODE_ENV === 'development'),
+      isDevelopment: config.isDevelopment || (() => import.meta.env?.DEV ?? false),
       cacheExpireTime: config.cacheExpireTime || 24 * 60 * 60 * 1000, // 24小时
       storageKey: config.storageKey || 'cached-icon-cache-v1',
       downloadApiEndpoint: config.downloadApiEndpoint || '/api/download-icon',
@@ -53,7 +53,8 @@ export class IconCacheManager {
     try {
       const cacheData: Record<string, IconCacheEntry> = {}
       this.cache.forEach((entry, key) => {
-        const { downloadPromise, ...persistentEntry } = entry
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { downloadPromise: _downloadPromise, ...persistentEntry } = entry
         cacheData[key] = persistentEntry
       })
       localStorage.setItem(this.config.storageKey, JSON.stringify(cacheData))
@@ -116,7 +117,7 @@ export class IconCacheManager {
   /**
    * 标记图标为正在下载
    */
-  markAsDownloading(iconName: string, downloadPromise: Promise<any>): IconCacheEntry {
+  markAsDownloading(iconName: string, downloadPromise: Promise<IconDownloadResult>): IconCacheEntry {
     return this.updateStatus(iconName, IconStatus.DOWNLOADING, { downloadPromise })
   }
 
@@ -177,7 +178,7 @@ export class IconCacheManager {
   /**
    * 获取下载Promise（如果正在下载）
    */
-  getDownloadPromise(iconName: string): Promise<any> | undefined {
+  getDownloadPromise(iconName: string): Promise<IconDownloadResult> | undefined {
     const entry = this.get(iconName)
     return entry?.downloadPromise
   }
@@ -236,7 +237,8 @@ export class IconCacheManager {
     if (!this.config.isDevelopment()) return
 
     const existingEntries = Array.from(this.cache.entries()).filter(
-      ([_, entry]) => entry.status === IconStatus.EXISTS || entry.status === IconStatus.DOWNLOADED
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      ([_iconName, entry]) => entry.status === IconStatus.EXISTS || entry.status === IconStatus.DOWNLOADED
     )
 
     for (const [iconName] of existingEntries) {
@@ -248,7 +250,7 @@ export class IconCacheManager {
         if (!response.ok) {
           this.updateStatus(iconName, IconStatus.UNKNOWN)
         }
-      } catch (error) {
+      } catch {
         this.updateStatus(iconName, IconStatus.UNKNOWN)
       }
     }
