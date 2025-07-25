@@ -17,7 +17,8 @@
       "import": "./lib/vite-plugin/index.js",
       "require": "./lib/vite-plugin/index.cjs"
     },
-    "./style.css": "./lib/style.css"
+    "./lib/cached-icon-vue.css": "./lib/cached-icon-vue.css",
+    "./style.css": "./lib/cached-icon-vue.css"
   },
   "files": [
     "lib",
