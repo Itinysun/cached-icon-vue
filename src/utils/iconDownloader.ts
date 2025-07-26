@@ -9,7 +9,7 @@ export class IconDownloader {
 
   constructor(config: CachedIconConfig = {}) {
     this.config = {
-      isDevelopment: config.isDevelopment || (() => import.meta.env?.DEV ?? false),
+      isDevelopment: config.isDevelopment || (() => false), // 默认禁用，由调用方决定
       cacheExpireTime: config.cacheExpireTime || 24 * 60 * 60 * 1000,
       storageKey: config.storageKey || 'cached-icon-cache-v1',
       downloadApiEndpoint: config.downloadApiEndpoint || '/api/download-icon',
@@ -21,9 +21,7 @@ export class IconDownloader {
    * 下载图标到本地（带缓存管理）
    */
   async downloadIcon(iconName: string, forceDownload = false): Promise<IconDownloadResult> {
-    if (!this.config.isDevelopment()) {
-      throw new Error('Icon downloader is only available in development mode')
-    }
+    // 移除环境检测 - 由调用方决定是否使用下载功能
 
     if (!iconName) {
       const result = {
@@ -85,9 +83,8 @@ export class IconDownloader {
    */
   private async performIconDownload(iconName: string): Promise<IconDownloadResult> {
     try {
-      const response = await fetch(
-        `${this.config.downloadApiEndpoint}?name=${encodeURIComponent(iconName)}`
-      )
+      const url = `${this.config.downloadApiEndpoint}?name=${encodeURIComponent(iconName)}`
+      const response = await fetch(url)
       const result: IconDownloadResult = await response.json()
 
       if (!response.ok) {

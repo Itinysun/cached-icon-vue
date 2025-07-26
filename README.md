@@ -2,6 +2,10 @@
 
 一个高性能的 Vue 3 图标组件，支持 SVG 缓存、自动下载和智能状态管理。
 
+[![npm version](https://img.shields.io/npm/v/cached-icon-vue.svg)](https://www.npmjs.com/package/cached-icon-vue)
+[![npm downloads](https://img.shields.io/npm/dm/cached-icon-vue.svg)](https://www.npmjs.com/package/cached-icon-vue)
+[![license](https://img.shields.io/npm/l/cached-icon-vue.svg)](https://github.com/Itinysun/cached-icon-vue/blob/main/LICENSE)
+
 ## 特性
 
 - 🚀 **高性能缓存** - 全局 SVG 内容缓存，避免重复请求
@@ -12,7 +16,9 @@
 - 🛠️ **灵活配置** - 支持自定义配置和扩展
 - ⚡ **Vite 插件** - 集成 Vite 插件，开发环境下自动下载图标
 
-## 安装
+## 快速开始
+
+### 1. 安装
 
 ```bash
 npm install cached-icon-vue
@@ -22,9 +28,93 @@ pnpm add cached-icon-vue
 yarn add cached-icon-vue
 ```
 
-## 使用方法
+### 2. 配置 Vite 插件
 
-### 1. 配置 Vite 插件（推荐）
+```typescript
+// vite.config.ts
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import { vitePluginCachedIcon } from 'cached-icon-vue/vite-plugin'
+
+export default defineConfig({
+  plugins: [
+    vue(),
+    vitePluginCachedIcon({
+      iconDir: 'public/icons',
+      iconSource: 'iconify',
+    }),
+  ],
+})
+```
+
+### 3. 使用组件
+
+```vue
+<script setup lang="ts">
+import { CachedIcon } from 'cached-icon-vue'
+</script>
+
+<template>
+  <CachedIcon name="mdi:home" size="24px" />
+  <CachedIcon name="mdi:star" size="32px" />
+  <CachedIcon name="heroicons:heart-20-solid" size="20px" />
+</template>
+```
+
+就这么简单！组件会自动在开发环境下载图标，并智能缓存以提高性能。
+
+## 最佳实践
+
+### 项目结构建议
+
+```
+src/
+├── components/
+│   └── icons/
+│       ├── AppIcon.vue          // 封装 CachedIcon
+│       └── icon-presets.ts      // 图标预设
+├── assets/
+│   └── icons/                   // 本地图标文件
+└── main.ts
+
+public/
+└── icons/                       // 自动下载的图标
+    ├── mdi-home.svg
+    ├── mdi-star.svg
+    └── ...
+```
+
+### 全局配置
+
+```typescript
+// main.ts
+import { createApp } from 'vue'
+import CachedIconVue from 'cached-icon-vue'
+import App from './App.vue'
+
+const app = createApp(App)
+
+// 全局配置
+app.use(CachedIconVue, {
+  // 自定义开发环境检测
+  isDevelopment: () => import.meta.env.DEV,
+
+  // 图标路径前缀
+  iconPathPrefix: '/icons',
+
+  // 下载 API 端点
+  downloadApiEndpoint: '/api/download-icon',
+
+  // 缓存过期时间（24小时）
+  cacheExpireTime: 24 * 60 * 60 * 1000,
+})
+
+app.mount('#app')
+```
+
+## 详细使用方法
+
+### 1. 配置 Vite 插件
 
 ```typescript
 // vite.config.ts
@@ -45,7 +135,7 @@ export default defineConfig({
 })
 ```
 
-### 2. 全局注册组件
+### 2. 注册组件
 
 ```typescript
 // main.ts
@@ -65,7 +155,7 @@ app.use(CachedIconVue, {
 app.mount('#app')
 ```
 
-### 按需导入
+### 3. 按需导入
 
 ```vue
 <script setup lang="ts">
@@ -281,14 +371,188 @@ vitePluginCachedIcon({
 - **Node.js**: >= 20.0.0
 - **pnpm**: >= 9.0.0
 - **Vue**: >= 3.5.0
-- **Vite**: >= 6.0.0（使用插件时）
+- **Vite**: >= 4.0.0（支持 4.x、5.x、6.x、7.x）
 
-## 注意事项
+## 常见问题
 
-1. **开发环境依赖** - 自动下载功能仅在开发环境可用
-2. **API 端点** - 需要后端提供图标下载 API（可选）
-3. **文件路径** - 图标文件需放置在正确的静态资源目录
-4. **浏览器兼容性** - 需要支持 ES2022+ 和现代浏览器特性
+### 1. 图标无法自动下载
+
+**问题**：组件显示默认图标，没有自动下载。
+
+**解决方案**：
+
+1. 确保已正确配置 Vite 插件
+2. 检查是否在开发环境（`npm run dev`）
+3. 确认图标名称格式正确（如 `mdi:home`）
+4. 查看浏览器控制台是否有错误信息
+
+### 2. 导入路径错误
+
+**问题**：`模块 "cached-icon-vue" 没有导出的成员 "vitePluginCachedIcon"`
+
+**解决方案**：
+
+```typescript
+// ❌ 错误的导入方式
+import { vitePluginCachedIcon } from 'cached-icon-vue'
+
+// ✅ 正确的导入方式
+import { vitePluginCachedIcon } from 'cached-icon-vue/vite-plugin'
+```
+
+### 3. 图标样式问题
+
+**问题**：图标颜色不正确或无法自定义。
+
+**解决方案**：
+
+```vue
+<template>
+  <!-- 使用 CSS 自定义颜色 -->
+  <CachedIcon name="mdi:home" class="text-blue-500" />
+
+  <!-- 或者使用内联样式 -->
+  <CachedIcon name="mdi:home" style="color: #3b82f6;" />
+</template>
+```
+
+### 4. 构建时错误
+
+**问题**：生产构建时出现模块解析错误。
+
+**解决方案**：
+
+```typescript
+// vite.config.ts
+export default defineConfig({
+  plugins: [
+    vue(),
+    // 确保插件配置正确
+    vitePluginCachedIcon({
+      iconDir: 'public/icons',
+      iconSource: 'iconify',
+    }),
+  ],
+  // 可能需要优化依赖
+  optimizeDeps: {
+    include: ['cached-icon-vue'],
+  },
+})
+```
+
+### 5. 缓存清理
+
+**问题**：图标缓存导致显示异常。
+
+**解决方案**：
+
+```typescript
+import { iconCache } from 'cached-icon-vue'
+
+// 清除所有缓存
+iconCache.clear()
+
+// 清除特定图标缓存
+iconCache.clear('mdi:home')
+
+// 或者清除浏览器存储
+localStorage.removeItem('cached-icon-cache-v1')
+```
+
+### 6. TypeScript 类型问题
+
+**问题**：TypeScript 报告类型错误。
+
+**解决方案**：
+
+```typescript
+// 确保正确导入类型
+import type { CachedIconProps } from 'cached-icon-vue'
+
+// 或者在 tsconfig.json 中添加
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "esModuleInterop": true
+  }
+}
+```
+
+## 故障排除
+
+### 开发环境调试
+
+1. **检查环境变量**：
+
+   ```javascript
+   console.log('DEV:', import.meta.env.DEV)
+   console.log('MODE:', import.meta.env.MODE)
+   console.log('NODE_ENV:', process.env.NODE_ENV)
+   ```
+
+2. **查看缓存状态**：
+
+   ```javascript
+   import { iconCache } from 'cached-icon-vue'
+   console.log('缓存统计:', iconCache.getStats())
+   ```
+
+3. **网络请求检查**：
+   - 打开浏览器开发者工具
+   - 查看 Network 标签
+   - 寻找 `/api/download-icon` 请求
+
+### 生产环境部署
+
+1. **静态资源配置**：
+
+   ```bash
+   # 确保图标目录被正确部署
+   public/
+   ├── icons/
+   │   ├── mdi-home.svg
+   │   ├── mdi-star.svg
+   │   └── ...
+   ```
+
+2. **服务器配置**：
+   ```nginx
+   # Nginx 配置示例
+   location /icons/ {
+       expires 1y;
+       add_header Cache-Control "public, immutable";
+   }
+   ```
+
+## 性能优化建议
+
+1. **预加载常用图标**：
+
+   ```typescript
+   // 在应用启动时预加载
+   import { iconDownloader } from 'cached-icon-vue'
+
+   const commonIcons = ['mdi:home', 'mdi:user', 'mdi:settings']
+   iconDownloader.downloadIcons(commonIcons)
+   ```
+
+2. **按需加载组件**：
+
+   ```typescript
+   // 使用动态导入
+   const CachedIcon = defineAsyncComponent(() => import('cached-icon-vue').then(m => m.CachedIcon))
+   ```
+
+3. **缓存配置优化**：
+
+   ```typescript
+   import { IconCacheManager } from 'cached-icon-vue'
+
+   const cache = new IconCacheManager({
+     cacheExpireTime: 7 * 24 * 60 * 60 * 1000, // 7天
+     storageKey: 'my-app-icons-v1',
+   })
+   ```
 
 ## 许可证
 

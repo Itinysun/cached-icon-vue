@@ -11,10 +11,8 @@ export { CachedIcon, LoadingIcon, ErrorIcon, DefaultIcon }
 export { iconCache, IconCacheManager } from './utils/iconCache'
 export { iconDownloader, IconDownloader } from './utils/iconDownloader'
 
-// 导出 Vite 插件
-export { vitePluginCachedIcon, VitePluginCachedIcon } from './vite-plugin'
-
-// 注意：Vite 插件也可以从 'cached-icon-vue/vite-plugin' 单独导入
+// 注意：Vite 插件从 'cached-icon-vue/vite-plugin' 导入
+// 不在主入口导出避免 Node.js 模块被包含在客户端代码中
 
 // 导出类型和枚举
 export type {

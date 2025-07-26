@@ -39,7 +39,15 @@ const iconComponent = ref<Component | null>(null)
 
 // 配置对象，用户可以通过插件配置覆盖
 const config: CachedIconConfig = {
-  isDevelopment: () => import.meta.env?.DEV ?? false,
+  isDevelopment: () => {
+    // 优先使用 import.meta.env.DEV，如果不存在则检查 NODE_ENV
+    if (typeof import.meta.env?.DEV === 'boolean') {
+      return import.meta.env.DEV
+    }
+    return (
+      import.meta.env?.MODE === 'development' || process.env.NODE_ENV === 'development' || false
+    )
+  },
   iconPathPrefix: '/icons',
   downloadApiEndpoint: '/api/download-icon',
 }
