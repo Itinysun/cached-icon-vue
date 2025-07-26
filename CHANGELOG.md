@@ -5,16 +5,14 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 并且本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
-
 # 1.1.0 (2025-07-26)
-
 
 ### Features
 
-* 更新 CI 和发布工作流，调整 Node.js 版本要求，添加发布验证脚本 ([6b99800](https://github.com/Itinysun/cached-icon-vue/commit/6b998008418c23cc35c129c4648bfd06754c51dd))
-* 更新 package.json 和 index.ts，优化样式导出和插件导入 ([5378b0b](https://github.com/Itinysun/cached-icon-vue/commit/5378b0b68802c11afb12cf4f1ded302b900ca25f))
-* enhance pre-release checks and improve plugin exports ([236eccc](https://github.com/Itinysun/cached-icon-vue/commit/236eccc9b130fd9a6b8fb19c6a3730c856c7547f))
-* Refactor tsconfig.json and vite.config.ts for improved configuration ([196ba6c](https://github.com/Itinysun/cached-icon-vue/commit/196ba6cdae0ac0305402c17ccaca39d35dd201a8))
+- 更新 CI 和发布工作流，调整 Node.js 版本要求，添加发布验证脚本 ([6b99800](https://github.com/Itinysun/cached-icon-vue/commit/6b998008418c23cc35c129c4648bfd06754c51dd))
+- 更新 package.json 和 index.ts，优化样式导出和插件导入 ([5378b0b](https://github.com/Itinysun/cached-icon-vue/commit/5378b0b68802c11afb12cf4f1ded302b900ca25f))
+- enhance pre-release checks and improve plugin exports ([236eccc](https://github.com/Itinysun/cached-icon-vue/commit/236eccc9b130fd9a6b8fb19c6a3730c856c7547f))
+- Refactor tsconfig.json and vite.config.ts for improved configuration ([196ba6c](https://github.com/Itinysun/cached-icon-vue/commit/196ba6cdae0ac0305402c17ccaca39d35dd201a8))
 
 ## [Unreleased]
 
