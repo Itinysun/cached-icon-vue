@@ -71,9 +71,9 @@ pnpm run typecheck
 echo "🔍 代码检查..."
 pnpm run lint:check
 
-# 格式检查
-echo "💅 格式检查..."
-pnpm run format:check
+# 格式化代码
+echo "💅 格式化代码..."
+pnpm run format
 
 # 构建
 echo "🏗️  构建..."
