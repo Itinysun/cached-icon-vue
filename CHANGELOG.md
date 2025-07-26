@@ -5,6 +5,12 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 并且本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+# [1.2.0](https://github.com/Itinysun/cached-icon-vue/compare/v1.1.1...v1.2.0) (2025-07-26)
+
+### Features
+
+- 导出 Vite 插件以便于使用 ([bab4294](https://github.com/Itinysun/cached-icon-vue/commit/bab429487f791179f436a99d086c1ad0ecb0baf8))
+
 ## [1.1.1](https://github.com/Itinysun/cached-icon-vue/compare/v1.1.0...v1.1.1) (2025-07-26)
 
 ### Bug Fixes
