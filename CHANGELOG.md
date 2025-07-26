@@ -5,6 +5,12 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 并且本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.1.1](https://github.com/Itinysun/cached-icon-vue/compare/v1.1.0...v1.1.1) (2025-07-26)
+
+### Bug Fixes
+
+- 更新 peerDependencies 中的 vite 版本范围，优化发布前检查脚本的格式化步骤 ([02c5b75](https://github.com/Itinysun/cached-icon-vue/commit/02c5b75c53626f9411e158d143884a0841e80eb2))
+
 # 1.1.0 (2025-07-26)
 
 ### Features
