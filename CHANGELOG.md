@@ -5,6 +5,18 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 并且本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+# [1.3.0](https://github.com/Itinysun/cached-icon-vue/compare/v1.2.0...v1.3.0) (2025-07-26)
+
+### Bug Fixes
+
+- 更新类型定义，确保从 Vite 插件注入的配置获取时的类型安全 ([8b56f1b](https://github.com/Itinysun/cached-icon-vue/commit/8b56f1b4f7eae411af3e9e6d85fb352bf1381acb))
+- 修复类型定义，确保从全局配置和 Vite 插件获取设置时的类型安全 ([f6738d5](https://github.com/Itinysun/cached-icon-vue/commit/f6738d5193f945ff59a997c93dfd2003a924084f))
+
+### Features
+
+- 更新文档和代码，添加 Vite 插件配置示例，改进图标下载工具的环境检测 ([6967ab5](https://github.com/Itinysun/cached-icon-vue/commit/6967ab5054498a2183783277b414912461e1877d))
+- 更新文档和代码，支持从全局配置和 Vite 插件获取设置，增强图标下载功能 ([c67ad9b](https://github.com/Itinysun/cached-icon-vue/commit/c67ad9bcc264d4262e6993b0062ae5ac4ef909db))
+
 # [1.2.0](https://github.com/Itinysun/cached-icon-vue/compare/v1.1.1...v1.2.0) (2025-07-26)
 
 ### Features

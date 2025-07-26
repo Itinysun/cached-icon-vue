@@ -1,6 +1,6 @@
 {
   "name": "cached-icon-vue",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "一个高性能的 Vue 3 图标组件，支持 SVG 缓存、自动下载和智能状态管理",
   "type": "module",
   "main": "./lib/index.js",
