@@ -244,18 +244,20 @@ const loadIcon = async (name: string) => {
     // 本地图标不存在，尝试自动下载（仅在开发环境）
     if (props.autoDownload && config.isDevelopment?.()) {
       // 检查是否最近下载失败过
-      if (iconCache.hasFailed(name)) {
+      const retryDelay = 30000 // 开发环境30秒重试
+      if (iconCache.hasFailed(name) && !iconCache.canRetryFailedDownload(name, retryDelay)) {
         const cacheEntry = iconCache.get(name)
         const timeSinceFailure = Date.now() - (cacheEntry?.lastChecked || 0)
-        const retryDelay = 30000 // 开发环境30秒重试
+        hasError.value = true
+        errorMessage.value = `图标下载失败，${Math.ceil(
+          (retryDelay - timeSinceFailure) / 1000
+        )}秒后可重试`
+        return false
+      }
 
-        if (timeSinceFailure < retryDelay) {
-          hasError.value = true
-          errorMessage.value = `图标下载失败，${Math.ceil(
-            (retryDelay - timeSinceFailure) / 1000
-          )}秒后可重试`
-          return false
-        }
+      // 如果可以重试，先重置失败状态
+      if (iconCache.hasFailed(name)) {
+        iconCache.resetFailedIcon(name)
       }
 
       try {
@@ -281,8 +283,11 @@ const loadIcon = async (name: string) => {
             iconComponent.value = retryComponent
             return true
           } else {
+            // 下载成功但加载失败，标记为失败状态以便重试
+            const errorMsg = '图标下载成功但加载失败'
+            iconCache.markAsFailed(name, errorMsg)
             hasError.value = true
-            errorMessage.value = '图标处理完成，但加载失败，请刷新页面'
+            errorMessage.value = errorMsg
           }
         } else {
           iconCache.markAsFailed(name, result.error || '下载失败')
@@ -364,6 +369,22 @@ onMounted(() => {
 defineExpose({
   updateConfig: (newConfig: Partial<CachedIconConfig>) => {
     Object.assign(config, newConfig)
+  },
+  // 重试加载失败的图标
+  retryIcon: async () => {
+    const name = iconName.value
+    if (name) {
+      // 重置失败状态
+      iconCache.resetFailedIcon(name)
+      // 重新加载
+      await loadIcon(name)
+    }
+  },
+  // 获取当前图标状态
+  getIconStatus: () => {
+    const name = iconName.value
+    if (!name) return null
+    return iconCache.get(name)
   },
 })
 </script>

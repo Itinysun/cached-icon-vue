@@ -79,6 +79,32 @@ export class IconCacheManager {
   }
 
   /**
+   * 检查是否可以重试失败的下载
+   */
+  canRetryFailedDownload(iconName: string, retryDelayMs: number = 30000): boolean {
+    const entry = this.get(iconName)
+    if (!entry || entry.status !== IconStatus.FAILED) {
+      return true
+    }
+
+    const timeSinceFailure = Date.now() - entry.lastChecked
+    return timeSinceFailure >= retryDelayMs
+  }
+
+  /**
+   * 重置失败的图标状态以便重试
+   */
+  resetFailedIcon(iconName: string): void {
+    const entry = this.get(iconName)
+    if (entry && entry.status === IconStatus.FAILED) {
+      entry.status = IconStatus.UNKNOWN
+      entry.error = undefined
+      entry.lastChecked = Date.now()
+      this.saveToStorage()
+    }
+  }
+
+  /**
    * 设置图标缓存条目
    */
   set(iconName: string, entry: Partial<IconCacheEntry>): IconCacheEntry {

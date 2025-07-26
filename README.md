@@ -11,6 +11,7 @@
 - 🚀 **高性能缓存** - 全局 SVG 内容缓存，避免重复请求
 - 📦 **智能下载** - Iconify图标无需安装,开发环境自动下载缺失图标
 - 🔄 **状态管理** - 完善的加载、错误、成功状态管理
+- 🔁 **智能重试** - 失败图标自动重试，确保下载成功
 - 💪 **TypeScript** - 完整的 TypeScript 类型支持
 - 🎨 **主题继承** - 自动继承父元素的颜色样式
 - 🛠️ **灵活配置** - 支持自定义配置和扩展
@@ -36,24 +37,33 @@ import vue from '@vitejs/plugin-vue'
 import { vitePluginCachedIcon } from 'cached-icon-vue/vite-plugin'
 
 export default defineConfig({
-  plugins: [
-    vue(),
-    vitePluginCachedIcon({
-      iconDir: 'public/icons', // 图标保存目录（必须在 public 目录下）
-      iconSource: 'iconify', // 图标来源
-      apiEndpoint: '/api/download-icon', // 自定义 API 端点（可选）
-    }),
-  ],
+  plugins: [vue(), vitePluginCachedIcon()],
 })
 ```
 
-> **重要说明**：
->
-> - `iconDir` 必须是 `public` 目录下的路径，因为图标需要作为静态资源提供服务
-> - 前端组件会**自动识别**插件配置的路径和API端点，无需手动配置
-> - 如果自定义了 `iconDir` 或 `apiEndpoint`，前端组件会自动使用新的配置
+### 3. 引入组件
 
-### 3. 使用组件
+```typescript
+// main.ts
+import { createApp } from 'vue'
+import CachedIconVue from 'cached-icon-vue'
+import App from './App.vue'
+
+const app = createApp(App)
+
+// 全局配置
+app.use(CachedIconVue, {
+  // 自定义开发环境检测
+  isDevelopment: () => import.meta.env.DEV,
+})
+
+app.mount('#app')
+```
+
+> **重要说明**：
+> isDevelopment 用来配置是否为开发环境.需要根据你的项目情况进行配置.只有在开发环境下,才会自动下载.下载后的文件在生产环境是直接使用的,避免性能浪费.
+
+### 4. 使用组件
 
 ```vue
 <script setup lang="ts">
@@ -69,9 +79,7 @@ import { CachedIcon } from 'cached-icon-vue'
 
 就这么简单！组件会自动在开发环境下载图标，并智能缓存以提高性能。生产环境则直接使用图标没有检测过程,没有副作用,不损失任何性能.
 
-## 最佳实践
-
-### 项目结构建议
+## 项目结构建议
 
 ```
 src/
@@ -90,34 +98,6 @@ public/
     └── ...
 ```
 
-### 全局配置
-
-```typescript
-// main.ts
-import { createApp } from 'vue'
-import CachedIconVue from 'cached-icon-vue'
-import App from './App.vue'
-
-const app = createApp(App)
-
-// 全局配置
-app.use(CachedIconVue, {
-  // 自定义开发环境检测
-  isDevelopment: () => import.meta.env.DEV,
-
-  // 图标路径前缀
-  iconPathPrefix: '/icons',
-
-  // 下载 API 端点
-  downloadApiEndpoint: '/api/download-icon',
-
-  // 缓存过期时间（24小时）
-  cacheExpireTime: 24 * 60 * 60 * 1000,
-})
-
-app.mount('#app')
-```
-
 ## 详细使用方法
 
 ### 1. 配置 Vite 插件
@@ -133,7 +113,7 @@ export default defineConfig({
     vue(),
     // 配置图标下载插件
     vitePluginCachedIcon({
-      iconDir: 'public/icons', // 图标保存目录
+      iconDir: 'public/icons', // 图标保存目录,必须在public目录下
       iconSource: 'iconify', // 图标来源：iconify 或 custom
       customUrlTemplate: '', // 自定义URL模板（可选）
     }),
@@ -152,10 +132,7 @@ import App from './App.vue'
 const app = createApp(App)
 
 app.use(CachedIconVue, {
-  // 可选配置
   isDevelopment: () => process.env.NODE_ENV === 'development',
-  iconPathPrefix: '/icons',
-  downloadApiEndpoint: '/api/download-icon',
 })
 
 app.mount('#app')
@@ -206,6 +183,44 @@ import { CachedIcon } from 'cached-icon-vue'
 | `autoDownload`     | `boolean`          | `true`               | 是否自动下载不存在的图标（仅开发环境） |
 | `showLoadingState` | `boolean`          | `true`               | 是否显示加载状态                       |
 | `showErrorState`   | `boolean`          | `true`               | 是否显示错误状态                       |
+
+## 组件方法
+
+通过 `ref` 可以调用组件的方法：
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { CachedIcon } from 'cached-icon-vue'
+
+const iconRef = ref()
+
+// 重试加载失败的图标
+const retryIcon = () => {
+  iconRef.value.retryIcon()
+}
+
+// 获取图标状态
+const getStatus = () => {
+  const status = iconRef.value.getIconStatus()
+  console.log('图标状态:', status)
+}
+</script>
+
+<template>
+  <CachedIcon ref="iconRef" name="mdi:home" />
+  <button @click="retryIcon">重试</button>
+  <button @click="getStatus">查看状态</button>
+</template>
+```
+
+### 组件方法说明
+
+| 方法名          | 参数     | 返回值           | 描述                   |
+| --------------- | -------- | ---------------- | ---------------------- |
+| `retryIcon`     | 无       | `Promise<void>`  | 重试加载失败的图标     |
+| `getIconStatus` | 无       | `IconCacheEntry` | 获取当前图标的缓存状态 |
+| `updateConfig`  | `config` | `void`           | 更新组件配置           |
 
 ## 高级用法
 
@@ -286,6 +301,12 @@ console.log('缓存统计:', stats)
 // 清除特定图标缓存
 iconCache.clear('mdi:home')
 
+// 重试失败的图标
+iconCache.resetFailedIcon('mdi:home')
+
+// 检查是否可以重试
+const canRetry = iconCache.canRetryFailedDownload('mdi:home')
+
 // 创建自定义缓存管理器
 const customCache = new IconCacheManager({
   isDevelopment: () => true,
@@ -308,6 +329,12 @@ iconCache.getStats()
 // 清除缓存
 iconCache.clear() // 清除全部
 iconCache.clear('mdi:home') // 清除特定图标
+
+// 重试失败的图标
+iconCache.resetFailedIcon('mdi:home')
+
+// 检查重试状态
+iconCache.canRetryFailedDownload('mdi:home', 30000) // 30秒重试间隔
 ```
 
 ## 支持的图标格式
@@ -328,9 +355,17 @@ iconCache.clear('mdi:home') // 清除特定图标
 ### 缓存策略
 
 - ✅ 成功加载的图标会被永久缓存（直到手动清除）
-- ⏰ 失败的请求有重试机制，30秒后可重试
+- ⏰ 失败的请求有智能重试机制，30秒后可重试
+- 🔄 失败状态不会被错误缓存，确保后续可以重试
 - 🗑️ 缓存会自动清理过期条目（默认24小时）
 - 💾 支持本地存储持久化
+
+### 重试机制
+
+- **智能重试** - 下载失败的图标会在30秒后自动重试
+- **状态管理** - 失败状态不会被永久缓存，避免阻塞后续重试
+- **手动重试** - 支持通过组件方法手动触发重试
+- **错误区分** - 区分网络错误、下载失败、解析错误等不同类型
 
 ## 状态管理
 
@@ -387,7 +422,49 @@ interface IconDownloaderOptions {
   iconDir?: string // SVG图标保存目录
   iconSource?: 'iconify' | 'custom' // 图标下载源
   customUrlTemplate?: string // 自定义下载URL模板
+  apiEndpoint?: string // API端点路径
 }
+
+interface IconCacheEntry {
+  name: string
+  status: 'unknown' | 'exists' | 'downloading' | 'downloaded' | 'failed'
+  svgContent?: string
+  error?: string
+  lastChecked: number
+  downloadPromise?: Promise<IconDownloadResult>
+}
+
+interface IconDownloadResult {
+  success: boolean
+  message: string
+  path?: string
+  exists: boolean
+  downloaded?: boolean
+  error?: string
+  details?: string
+  svgContent?: string
+}
+```
+
+### 缓存管理器 API
+
+```typescript
+import { iconCache, IconCacheManager } from 'cached-icon-vue'
+
+// 全局缓存管理器实例
+iconCache.get(iconName: string): IconCacheEntry | undefined
+iconCache.set(iconName: string, entry: Partial<IconCacheEntry>): IconCacheEntry
+iconCache.clear(iconName?: string): void
+iconCache.getStats(): IconCacheStats
+iconCache.markAsExists(iconName: string, svgContent?: string): IconCacheEntry
+iconCache.markAsDownloading(iconName: string, promise: Promise<IconDownloadResult>): IconCacheEntry
+iconCache.markAsDownloaded(iconName: string, svgContent?: string): IconCacheEntry
+iconCache.markAsFailed(iconName: string, error: string): IconCacheEntry
+iconCache.resetFailedIcon(iconName: string): void
+iconCache.canRetryFailedDownload(iconName: string, retryDelayMs?: number): boolean
+iconCache.isKnownToExist(iconName: string): boolean
+iconCache.isDownloading(iconName: string): boolean
+iconCache.hasFailed(iconName: string): boolean
 ```
 
 ### Vite 插件 API
@@ -403,6 +480,7 @@ vitePluginCachedIcon({
   iconDir: 'public/icons', // 默认: 'public/icons'
   iconSource: 'iconify', // 默认: 'iconify'
   customUrlTemplate: '{name}.svg', // 仅当 iconSource 为 'custom' 时使用
+  apiEndpoint: '/api/download-icon', // 默认: '/api/download-icon'
 })
 ```
 
@@ -425,6 +503,19 @@ vitePluginCachedIcon({
 2. 检查是否在开发环境（`npm run dev`）
 3. 确认图标名称格式正确（如 `mdi:home`）
 4. 查看浏览器控制台是否有错误信息
+5. 检查是否在重试冷却期内（默认30秒）
+
+**手动重试方法**：
+
+```javascript
+// 方法1：通过组件实例
+const iconRef = ref()
+iconRef.value.retryIcon()
+
+// 方法2：通过缓存管理器
+import { iconCache } from 'cached-icon-vue'
+iconCache.resetFailedIcon('mdi:home')
+```
 
 ### 2. 导入路径错误
 
@@ -480,9 +571,9 @@ export default defineConfig({
 })
 ```
 
-### 5. 缓存清理
+### 5. 缓存清理和重试
 
-**问题**：图标缓存导致显示异常。
+**问题**：图标缓存导致显示异常或下载失败。
 
 **解决方案**：
 
@@ -495,8 +586,43 @@ iconCache.clear()
 // 清除特定图标缓存
 iconCache.clear('mdi:home')
 
+// 重试失败的图标
+iconCache.resetFailedIcon('mdi:home')
+
+// 检查是否可以重试
+if (iconCache.canRetryFailedDownload('mdi:home')) {
+  iconCache.resetFailedIcon('mdi:home')
+}
+
 // 或者清除浏览器存储
 localStorage.removeItem('cached-icon-cache-v1')
+```
+
+### 6. 图标下载频繁失败
+
+**问题**：图标下载反复失败，无法正常显示。
+
+**原因分析**：
+
+- 网络连接问题
+- 图标名称不存在
+- API 端点配置错误
+- 服务器限流
+
+**解决方案**：
+
+```typescript
+// 检查图标状态
+const iconStatus = iconCache.get('mdi:home')
+console.log('图标状态:', iconStatus)
+
+// 手动重试失败的图标
+if (iconStatus?.status === 'failed') {
+  iconCache.resetFailedIcon('mdi:home')
+}
+
+// 配置更长的重试间隔
+const canRetry = iconCache.canRetryFailedDownload('mdi:home', 60000) // 60秒
 ```
 
 ### 6. TypeScript 类型问题
