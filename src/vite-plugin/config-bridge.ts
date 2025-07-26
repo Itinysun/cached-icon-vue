@@ -1,4 +1,4 @@
-import type { IconDownloaderOptions } from '../types'
+import type { IconDownloaderOptions, CachedIconConfig } from '../types'
 
 /**
  * 将 Vite 插件配置转换为前端组件配置
@@ -33,7 +33,7 @@ export function createConfigBridge(options: IconDownloaderOptions) {
 export function injectConfigToWindow(options: IconDownloaderOptions) {
   if (typeof window !== 'undefined') {
     const config = createConfigBridge(options)
-    ;(window as { __CACHED_ICON_CONFIG__?: Record<string, unknown> }).__CACHED_ICON_CONFIG__ =
+    ;(window as { __CACHED_ICON_CONFIG__?: Partial<CachedIconConfig> }).__CACHED_ICON_CONFIG__ =
       config
   }
 }

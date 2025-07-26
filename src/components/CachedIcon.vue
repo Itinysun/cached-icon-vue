@@ -43,8 +43,9 @@ const globalConfig = inject<CachedIconConfig>('cached-icon-options', {})
 // 获取 Vite 插件注入的配置
 const vitePluginConfig =
   typeof window !== 'undefined'
-    ? (window as { __CACHED_ICON_CONFIG__?: Record<string, unknown> }).__CACHED_ICON_CONFIG__ || {}
-    : {}
+    ? (window as { __CACHED_ICON_CONFIG__?: Partial<CachedIconConfig> }).__CACHED_ICON_CONFIG__ ||
+      {}
+    : ({} as Partial<CachedIconConfig>)
 
 // 配置对象，合并 Vite 插件配置、全局配置和默认配置
 const config: CachedIconConfig = {
