@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref, watchEffect, onMounted, h } from 'vue'
+import { computed, ref, watchEffect, onMounted, h, inject } from 'vue'
 import type { Component, VNode } from 'vue'
 import type { CachedIconProps, CachedIconConfig } from '../types'
 import { iconCache } from '../utils/iconCache'
@@ -37,19 +37,34 @@ const hasError = ref(false)
 const errorMessage = ref('')
 const iconComponent = ref<Component | null>(null)
 
-// 配置对象，用户可以通过插件配置覆盖
+// 从全局配置中获取设置
+const globalConfig = inject<CachedIconConfig>('cached-icon-options', {})
+
+// 获取 Vite 插件注入的配置
+const vitePluginConfig =
+  typeof window !== 'undefined' ? (window as any).__CACHED_ICON_CONFIG__ || {} : {}
+
+// 配置对象，合并 Vite 插件配置、全局配置和默认配置
 const config: CachedIconConfig = {
-  isDevelopment: () => {
-    // 优先使用 import.meta.env.DEV，如果不存在则检查 NODE_ENV
-    if (typeof import.meta.env?.DEV === 'boolean') {
-      return import.meta.env.DEV
-    }
-    return (
-      import.meta.env?.MODE === 'development' || process.env.NODE_ENV === 'development' || false
-    )
-  },
-  iconPathPrefix: '/icons',
-  downloadApiEndpoint: '/api/download-icon',
+  isDevelopment:
+    globalConfig.isDevelopment ||
+    vitePluginConfig.isDevelopment ||
+    (() => {
+      // 优先使用 import.meta.env.DEV，如果不存在则检查 NODE_ENV
+      if (typeof import.meta.env?.DEV === 'boolean') {
+        return import.meta.env.DEV
+      }
+      return (
+        import.meta.env?.MODE === 'development' || process.env.NODE_ENV === 'development' || false
+      )
+    }),
+  iconPathPrefix: globalConfig.iconPathPrefix || vitePluginConfig.iconPathPrefix || '/icons',
+  downloadApiEndpoint:
+    globalConfig.downloadApiEndpoint ||
+    vitePluginConfig.downloadApiEndpoint ||
+    '/api/download-icon',
+  cacheExpireTime: globalConfig.cacheExpireTime || 24 * 60 * 60 * 1000,
+  storageKey: globalConfig.storageKey || 'cached-icon-cache-v1',
 }
 
 // 处理尺寸

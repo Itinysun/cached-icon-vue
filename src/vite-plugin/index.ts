@@ -2,11 +2,13 @@ import type { Plugin } from 'vite'
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'
 import { resolve, join } from 'node:path'
 import type { IconDownloaderOptions } from '../types'
+import { createConfigBridge } from './config-bridge'
 
 const defaultOptions: Required<IconDownloaderOptions> = {
   iconDir: 'public/icons',
   iconSource: 'iconify',
   customUrlTemplate: '',
+  apiEndpoint: '/api/download-icon',
 }
 
 /**
@@ -17,11 +19,21 @@ export function vitePluginCachedIcon(options: IconDownloaderOptions = {}): Plugi
 
   return {
     name: 'vite-plugin-cached-icon',
+    config(config, { command }) {
+      // 在开发模式下注入配置
+      if (command === 'serve') {
+        const bridgeConfig = createConfigBridge(opts)
+        // 通过 define 注入配置
+        config.define = config.define || {}
+        config.define.__CACHED_ICON_CONFIG__ = JSON.stringify(bridgeConfig)
+      }
+    },
     configureServer(server) {
       // 只在开发模式下启用
       if (server.config.command !== 'serve') return
 
-      server.middlewares.use('/api/download-icon', async (req, res) => {
+      // 支持自定义 API 端点
+      server.middlewares.use(opts.apiEndpoint, async (req, res) => {
         try {
           // 设置CORS头
           res.setHeader('Access-Control-Allow-Origin', '*')

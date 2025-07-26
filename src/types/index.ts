@@ -67,10 +67,12 @@ export interface CachedIconConfig {
 
 // Vite 插件相关类型
 export interface IconDownloaderOptions {
-  /** SVG图标保存目录 */
+  /** SVG图标保存目录（必须是 public 目录下的路径） */
   iconDir?: string
   /** 图标下载源 */
   iconSource?: 'iconify' | 'custom'
   /** 自定义下载URL模板 */
   customUrlTemplate?: string
+  /** 自定义API端点 */
+  apiEndpoint?: string
 }

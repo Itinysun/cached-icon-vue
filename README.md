@@ -1,6 +1,6 @@
 # cached-icon-vue
 
-一个高性能的 Vue 3 图标组件，支持 SVG 缓存、自动下载和智能状态管理。
+一个高性能的 Vue 3 图标组件，无需安装 Iconify 包,可直接使用任意ICON, 支持 SVG 缓存、自动下载和智能状态管理。
 
 [![npm version](https://img.shields.io/npm/v/cached-icon-vue.svg)](https://www.npmjs.com/package/cached-icon-vue)
 [![npm downloads](https://img.shields.io/npm/dm/cached-icon-vue.svg)](https://www.npmjs.com/package/cached-icon-vue)
@@ -9,12 +9,11 @@
 ## 特性
 
 - 🚀 **高性能缓存** - 全局 SVG 内容缓存，避免重复请求
-- 📦 **智能下载** - 开发环境自动下载缺失图标
+- 📦 **智能下载** - Iconify图标无需安装,开发环境自动下载缺失图标
 - 🔄 **状态管理** - 完善的加载、错误、成功状态管理
 - 💪 **TypeScript** - 完整的 TypeScript 类型支持
 - 🎨 **主题继承** - 自动继承父元素的颜色样式
 - 🛠️ **灵活配置** - 支持自定义配置和扩展
-- ⚡ **Vite 插件** - 集成 Vite 插件，开发环境下自动下载图标
 
 ## 快速开始
 
@@ -40,12 +39,19 @@ export default defineConfig({
   plugins: [
     vue(),
     vitePluginCachedIcon({
-      iconDir: 'public/icons',
-      iconSource: 'iconify',
+      iconDir: 'public/icons', // 图标保存目录（必须在 public 目录下）
+      iconSource: 'iconify', // 图标来源
+      apiEndpoint: '/api/download-icon', // 自定义 API 端点（可选）
     }),
   ],
 })
 ```
+
+> **重要说明**：
+>
+> - `iconDir` 必须是 `public` 目录下的路径，因为图标需要作为静态资源提供服务
+> - 前端组件会**自动识别**插件配置的路径和API端点，无需手动配置
+> - 如果自定义了 `iconDir` 或 `apiEndpoint`，前端组件会自动使用新的配置
 
 ### 3. 使用组件
 
@@ -61,7 +67,7 @@ import { CachedIcon } from 'cached-icon-vue'
 </template>
 ```
 
-就这么简单！组件会自动在开发环境下载图标，并智能缓存以提高性能。
+就这么简单！组件会自动在开发环境下载图标，并智能缓存以提高性能。生产环境则直接使用图标没有检测过程,没有副作用,不损失任何性能.
 
 ## 最佳实践
 
@@ -207,24 +213,58 @@ import { CachedIcon } from 'cached-icon-vue'
 
 ```typescript
 // vite.config.ts
-import { vitePluginCachedIcon } from 'cached-icon-vue'
+import { vitePluginCachedIcon } from 'cached-icon-vue/vite-plugin'
 
 export default defineConfig({
   plugins: [
     // 基础配置
     vitePluginCachedIcon({
-      iconDir: 'public/icons',
-      iconSource: 'iconify',
+      iconDir: 'public/icons', // 图标保存目录
+      iconSource: 'iconify', // 图标来源
+      apiEndpoint: '/api/download-icon', // API 端点（可选）
     }),
 
-    // 或者使用自定义图标源
+    // 自定义图标源配置
     vitePluginCachedIcon({
       iconDir: 'public/custom-icons',
       iconSource: 'custom',
       customUrlTemplate: 'https://your-icon-cdn.com/{name}.svg',
+      apiEndpoint: '/api/icons', // 自定义 API 端点
+    }),
+
+    // 不同项目结构的配置
+    vitePluginCachedIcon({
+      iconDir: 'public/assets/icons', // 深层目录
+      iconSource: 'iconify',
+      apiEndpoint: '/custom/icon-api', // 自定义端点
     }),
   ],
 })
+```
+
+#### 配置选项说明
+
+| 选项                | 类型                    | 默认值                 | 说明                                   |
+| ------------------- | ----------------------- | ---------------------- | -------------------------------------- |
+| `iconDir`           | `string`                | `'public/icons'`       | 图标保存目录，**必须在 public 目录下** |
+| `iconSource`        | `'iconify' \| 'custom'` | `'iconify'`            | 图标下载源                             |
+| `customUrlTemplate` | `string`                | `''`                   | 自定义图标 URL 模板                    |
+| `apiEndpoint`       | `string`                | `'/api/download-icon'` | 图标下载 API 端点                      |
+
+#### 自动配置同步
+
+插件会自动将配置传递给前端组件：
+
+```typescript
+// 插件配置
+vitePluginCachedIcon({
+  iconDir: 'public/my-icons',
+  apiEndpoint: '/custom/icons',
+})
+
+// 前端组件会自动使用：
+// - iconPathPrefix: '/my-icons'
+// - downloadApiEndpoint: '/custom/icons'
 ```
 
 插件会在开发环境下提供 `/api/download-icon` API 端点，支持：
@@ -477,6 +517,81 @@ import type { CachedIconProps } from 'cached-icon-vue'
   }
 }
 ```
+
+## 常见问题解答 (FAQ)
+
+### 1. 为什么 iconDir 必须在 public 目录下？
+
+**原因**：
+
+- 图标文件需要作为**静态资源**被浏览器直接访问
+- Vite 只会将 `public` 目录下的文件作为静态资源提供服务
+- 如果图标放在 `src` 或其他目录，会导致运行时 404 错误
+
+**正确的配置示例**：
+
+```typescript
+// ✅ 正确：iconDir 在 public 目录下
+vitePluginCachedIcon({
+  iconDir: 'public/icons', // 图标保存在 public/icons/
+  // 运行时访问路径: /icons/mdi-home.svg
+})
+
+vitePluginCachedIcon({
+  iconDir: 'public/assets/icons', // 图标保存在 public/assets/icons/
+  // 运行时访问路径: /assets/icons/mdi-home.svg
+})
+```
+
+**错误的配置示例**：
+
+```typescript
+// ❌ 错误：iconDir 不在 public 目录下
+vitePluginCachedIcon({
+  iconDir: 'src/assets/icons', // 浏览器无法访问
+  // 运行时会出现 404 错误
+})
+
+vitePluginCachedIcon({
+  iconDir: 'assets/icons', // 相对路径，不在 public 下
+  // 运行时会出现 404 错误
+})
+```
+
+### 2. 配置同步机制如何工作？
+
+**自动同步**：插件会自动将配置传递给前端组件，无需手动配置。
+
+```typescript
+// 插件配置
+vitePluginCachedIcon({
+  iconDir: 'public/my-icons',
+  apiEndpoint: '/custom/icons',
+})
+
+// 前端组件自动使用相同配置：
+// - 图标路径: /my-icons/
+// - API 端点: /custom/icons
+```
+
+**配置优先级**：
+
+1. 全局配置（app.use 时传入）
+2. Vite 插件配置（自动注入）
+3. 默认配置
+
+### 3. 图标命名规则
+
+**支持的格式**：
+
+- `mdi:home` → 文件名：`mdi-home.svg`
+- `heroicons:home-20-solid` → 文件名：`heroicons-home-20-solid.svg`
+- `ic:round-home` → 文件名：`ic-round-home.svg`
+
+**命名转换规则**：
+
+- 冒号 `:` 替换为短横线 `-`
+- 确保文件名在不同操作系统下都有效
 
 ## 故障排除
 
