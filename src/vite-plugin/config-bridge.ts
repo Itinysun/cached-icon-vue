@@ -17,7 +17,11 @@ export function createConfigBridge(options: IconDownloaderOptions) {
         return import.meta.env.DEV
       }
       return (
-        import.meta.env?.MODE === 'development' || process.env.NODE_ENV === 'development' || false
+        import.meta.env?.MODE === 'development' ||
+        (typeof globalThis !== 'undefined' &&
+          (globalThis as { process?: { env?: { NODE_ENV?: string } } }).process?.env?.NODE_ENV ===
+            'development') ||
+        false
       )
     },
   }
@@ -29,6 +33,7 @@ export function createConfigBridge(options: IconDownloaderOptions) {
 export function injectConfigToWindow(options: IconDownloaderOptions) {
   if (typeof window !== 'undefined') {
     const config = createConfigBridge(options)
-    ;(window as any).__CACHED_ICON_CONFIG__ = config
+    ;(window as { __CACHED_ICON_CONFIG__?: Record<string, unknown> }).__CACHED_ICON_CONFIG__ =
+      config
   }
 }

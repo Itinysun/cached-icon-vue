@@ -42,7 +42,9 @@ const globalConfig = inject<CachedIconConfig>('cached-icon-options', {})
 
 // 获取 Vite 插件注入的配置
 const vitePluginConfig =
-  typeof window !== 'undefined' ? (window as any).__CACHED_ICON_CONFIG__ || {} : {}
+  typeof window !== 'undefined'
+    ? (window as { __CACHED_ICON_CONFIG__?: Record<string, unknown> }).__CACHED_ICON_CONFIG__ || {}
+    : {}
 
 // 配置对象，合并 Vite 插件配置、全局配置和默认配置
 const config: CachedIconConfig = {
@@ -55,7 +57,11 @@ const config: CachedIconConfig = {
         return import.meta.env.DEV
       }
       return (
-        import.meta.env?.MODE === 'development' || process.env.NODE_ENV === 'development' || false
+        import.meta.env?.MODE === 'development' ||
+        (typeof globalThis !== 'undefined' &&
+          (globalThis as { process?: { env?: { NODE_ENV?: string } } }).process?.env?.NODE_ENV ===
+            'development') ||
+        false
       )
     }),
   iconPathPrefix: globalConfig.iconPathPrefix || vitePluginConfig.iconPathPrefix || '/icons',
