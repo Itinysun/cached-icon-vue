@@ -1,7 +1,9 @@
 # 开发模式提醒功能测试指南
 
 ## 🎯 目标
+
 验证 CachedIcon 的开发模式提醒功能是否正常工作，包括：
+
 - Vue 插件安装时的提醒
 - Vite 插件启动时的提醒
 - 用户自定义环境检测的兼容性
@@ -11,6 +13,7 @@
 ### 方法1：使用现有测试项目
 
 1. **启动测试项目**
+
    ```bash
    cd /Users/liuchunwei/web/packages/cached-icon-test
    npm run dev
@@ -18,6 +21,7 @@
 
 2. **查看终端输出**
    你应该看到 Vite 插件的开发模式提醒：
+
    ```
    🔧 CachedIcon Vite 插件已启用 (开发模式)
      • 图标下载 API 端点: /api/download-icon
@@ -56,6 +60,7 @@ app.use(CachedIconVue, {
 ```
 
 重新启动项目后，你应该看到额外的提醒信息：
+
 ```
 🚀 CachedIcon 开发模式已启用
 • 图标自动下载功能已启用
@@ -67,6 +72,7 @@ app.use(CachedIconVue, {
 ### 方法3：使用测试HTML文件
 
 1. **启动一个简单的HTTP服务器**
+
    ```bash
    # 在 cached-icon-vue 项目根目录
    python -m http.server 8080
@@ -75,6 +81,7 @@ app.use(CachedIconVue, {
    ```
 
 2. **访问测试页面**
+
    ```
    http://localhost:8080/test-dev-reminder.html
    ```
@@ -87,36 +94,39 @@ app.use(CachedIconVue, {
 ## 🧪 测试用例
 
 ### 1. 默认环境检测
+
 - **期望**：在 localhost 环境下显示开发模式提醒
 - **测试**：直接使用 `app.use(CachedIconVue)` 不传参数
 
 ### 2. 自定义环境检测（强制开发模式）
+
 - **期望**：无论在什么环境都显示开发模式提醒
 - **测试**：
   ```typescript
   app.use(CachedIconVue, {
-    isDevelopment: () => true
+    isDevelopment: () => true,
   })
   ```
 
 ### 3. 自定义环境检测（强制生产模式）
+
 - **期望**：无论在什么环境都不显示开发模式提醒
 - **测试**：
   ```typescript
   app.use(CachedIconVue, {
-    isDevelopment: () => false
+    isDevelopment: () => false,
   })
   ```
 
 ### 4. 基于hostname的环境检测
+
 - **期望**：只在 localhost 或包含 'dev' 的hostname下显示提醒
 - **测试**：
   ```typescript
   app.use(CachedIconVue, {
     isDevelopment: () => {
-      return location.hostname === 'localhost' || 
-             location.hostname.includes('dev')
-    }
+      return location.hostname === 'localhost' || location.hostname.includes('dev')
+    },
   })
   ```
 
@@ -125,11 +135,13 @@ app.use(CachedIconVue, {
 ### 使用全局调试函数
 
 在浏览器控制台中输入：
+
 ```javascript
 window.CachedIcon?.debugEnv()
 ```
 
 你应该看到详细的环境信息：
+
 ```
 🔍 CachedIcon 环境检测信息
   当前环境模式: development
@@ -142,6 +154,7 @@ window.CachedIcon?.debugEnv()
 ### 检查环境变量
 
 在控制台中检查：
+
 ```javascript
 console.log('import.meta.env.DEV:', import.meta.env.DEV)
 console.log('import.meta.env.MODE:', import.meta.env.MODE)
@@ -150,14 +163,17 @@ console.log('import.meta.env.MODE:', import.meta.env.MODE)
 ## 🐛 故障排除
 
 ### 问题1：看不到任何提醒
+
 - **原因**：环境检测认为当前是生产环境
 - **解决**：使用自定义环境检测强制开发模式
 
 ### 问题2：Vite插件提醒不显示
+
 - **原因**：Vite插件配置问题
 - **解决**：确保 `vite.config.ts` 中正确配置了 `vitePluginCachedIcon()`
 
 ### 问题3：Vue插件提醒不显示
+
 - **原因**：浏览器控制台未打开或被清空
 - **解决**：打开开发者工具，刷新页面
 
@@ -166,6 +182,7 @@ console.log('import.meta.env.MODE:', import.meta.env.MODE)
 正常情况下，你应该看到：
 
 1. **终端输出**（Vite 插件）：
+
    ```
    🔧 CachedIcon Vite 插件已启用 (开发模式)
      • 图标下载 API 端点: /api/download-icon
@@ -174,6 +191,7 @@ console.log('import.meta.env.MODE:', import.meta.env.MODE)
    ```
 
 2. **浏览器控制台输出**（Vue 插件）：
+
    ```
    🚀 CachedIcon 开发模式已启用
    • 图标自动下载功能已启用

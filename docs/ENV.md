@@ -35,13 +35,14 @@ import { vitePluginCachedIcon } from 'cached-icon-vue/vite-plugin'
 export default {
   plugins: [
     vitePluginCachedIcon({
-      isDevelopment: () => process.env.CUSTOM_ENV === 'dev'
-    })
-  ]
+      isDevelopment: () => process.env.CUSTOM_ENV === 'dev',
+    }),
+  ],
 }
 ```
 
 **注意**：Vite 插件支持两种环境检测模式：
+
 - **默认模式**：只在 `vite dev` （serve 模式）下启用
 - **自定义模式**：当提供 `isDevelopment` 函数时，会结合 Vite 模式和自定义检测结果
 
@@ -55,7 +56,7 @@ const app = createApp(App)
 
 // 使用自定义环境检测函数
 app.use(CachedIconVue, {
-  isDevelopment: () => window.location.hostname === 'localhost'
+  isDevelopment: () => window.location.hostname === 'localhost',
 })
 ```
 
@@ -63,7 +64,7 @@ app.use(CachedIconVue, {
 
 ```typescript
 app.config.globalProperties.$cachedIcon = {
-  isDevelopment: () => window.location.hostname === 'localhost'
+  isDevelopment: () => window.location.hostname === 'localhost',
 }
 ```
 
@@ -71,10 +72,7 @@ app.config.globalProperties.$cachedIcon = {
 
 ```vue
 <template>
-  <CachedIcon 
-    name="home" 
-    :config="{ isDevelopment: () => myCustomCheck() }"
-  />
+  <CachedIcon name="home" :config="{ isDevelopment: () => myCustomCheck() }" />
 </template>
 ```
 
@@ -83,12 +81,16 @@ app.config.globalProperties.$cachedIcon = {
 环境检测配置按以下优先级生效：
 
 ### 插件级别环境检测
+
 插件安装时的环境检测优先级：
+
 1. **插件安装选项**：通过 `app.use(CachedIconVue, { isDevelopment: ... })` 设置
 2. **默认检测**：使用内置的默认检测逻辑
 
 ### 组件级别环境检测
+
 组件中的环境检测配置按以下优先级生效：
+
 1. **组件级配置**：通过 `props.config.isDevelopment` 传入
 2. **全局配置**：通过 `app.config.globalProperties.$cachedIcon.isDevelopment` 设置
 3. **Vite 插件配置**：通过插件选项设置
@@ -105,6 +107,7 @@ app.config.globalProperties.$cachedIcon = {
 #### 触发场景
 
 1. **直接访问环境变量**
+
 ```javascript
 // ❌ 会被构建时优化
 if (import.meta.env.DEV) {
@@ -114,6 +117,7 @@ if (import.meta.env.DEV) {
 ```
 
 2. **条件判断中的环境变量**
+
 ```javascript
 // ❌ 会被优化，整个代码块会被删除
 if (import.meta.env.NODE_ENV === 'development') {
@@ -122,6 +126,7 @@ if (import.meta.env.NODE_ENV === 'development') {
 ```
 
 3. **函数返回值中的环境变量**
+
 ```javascript
 // ❌ 会被优化为固定返回值
 export function isDev() {
@@ -147,7 +152,7 @@ export function defaultIsDevelopment(): boolean {
       if (typeof importMeta.env.DEV === 'boolean') {
         return importMeta.env.DEV
       }
-      
+
       // 其次检查 MODE
       if (importMeta.env.MODE === 'development') {
         return true
@@ -177,9 +182,7 @@ export function defaultIsDevelopment(): boolean {
 }
 
 // 环境检测器工厂
-export function createEnvironmentDetector(
-  customDetector?: () => boolean
-): () => boolean {
+export function createEnvironmentDetector(customDetector?: () => boolean): () => boolean {
   return customDetector || defaultIsDevelopment
 }
 
@@ -327,17 +330,19 @@ cat lib/env.js
 ```
 
 **问题表现**：如果看到类似以下代码，说明遇到了优化问题：
+
 ```javascript
 function defaultIsDevelopment() {
-  return false;  // 硬编码，没有任何检测逻辑
+  return false // 硬编码，没有任何检测逻辑
 }
 ```
 
 **正常表现**：应该看到完整的检测逻辑：
+
 ```javascript
 function defaultIsDevelopment() {
   try {
-    const importMeta = new Function('...')();
+    const importMeta = new Function('...')()
     // 完整的运行时检测逻辑
   } catch {
     // 错误处理

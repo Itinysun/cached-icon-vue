@@ -132,12 +132,12 @@ export function debugEnvironmentDetection(customDetector?: () => boolean): void 
       ? (globalThis as { process?: { env?: { NODE_ENV?: string } } }).process?.env?.NODE_ENV
       : '未定义'
   )
-  
+
   // 检查是否使用自定义环境检测函数
   const isUsingCustomDetector = typeof customDetector === 'function'
   const detector = isUsingCustomDetector ? customDetector : defaultIsDevelopment
   const result = detector()
-  
+
   console.log('使用自定义环境检测:', isUsingCustomDetector ? '是' : '否')
   if (isUsingCustomDetector) {
     console.log('自定义检测函数结果:', result ? '开发环境' : '生产环境')

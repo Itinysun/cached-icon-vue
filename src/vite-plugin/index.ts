@@ -18,7 +18,7 @@ const defaultOptions: Required<IconDownloaderOptions> = {
  */
 export function vitePluginCachedIcon(options: IconDownloaderOptions = {}): Plugin {
   const opts = { ...defaultOptions, ...options }
-  
+
   // 创建环境检测器，支持用户自定义检测函数
   const environmentDetector = createEnvironmentDetector(options.isDevelopment)
 
@@ -28,34 +28,22 @@ export function vitePluginCachedIcon(options: IconDownloaderOptions = {}): Plugi
       // 检查是否为开发环境（结合 Vite 的 command 和用户自定义检测）
       const isViteServeMode = command === 'serve'
       const isUserDefinedDev = environmentDetector()
-      
+
       // 如果是 Vite 开发模式，或者用户自定义检测为开发模式，则启用功能
       const shouldEnableDev = isViteServeMode || (options.isDevelopment && isUserDefinedDev)
-      
+
       if (shouldEnableDev) {
         // 开发模式提醒
-        console.log(
-          '\x1b[36m%s\x1b[0m',
-          '🔧 CachedIcon Vite 插件已启用 (开发模式)'
-        )
-        
+        console.log('\x1b[36m%s\x1b[0m', '🔧 CachedIcon Vite 插件已启用 (开发模式)')
+
         if (options.isDevelopment && !isViteServeMode) {
-          console.log(
-            '\x1b[33m%s\x1b[0m',
-            '  ⚠️  使用用户自定义环境检测（非 Vite serve 模式）'
-          )
+          console.log('\x1b[33m%s\x1b[0m', '  ⚠️  使用用户自定义环境检测（非 Vite serve 模式）')
         }
-        
-        console.log(
-          '  • 图标下载 API 端点:', opts.apiEndpoint
-        )
-        console.log(
-          '  • 图标保存目录:', opts.iconDir
-        )
-        console.log(
-          '  • 图标来源:', opts.iconSource
-        )
-        
+
+        console.log('  • 图标下载 API 端点:', opts.apiEndpoint)
+        console.log('  • 图标保存目录:', opts.iconDir)
+        console.log('  • 图标来源:', opts.iconSource)
+
         const bridgeConfig = createConfigBridge(opts)
         // 通过 define 注入配置
         config.define = config.define || {}
@@ -67,7 +55,7 @@ export function vitePluginCachedIcon(options: IconDownloaderOptions = {}): Plugi
       const isViteServeMode = server.config.command === 'serve'
       const isUserDefinedDev = environmentDetector()
       const shouldEnableDev = isViteServeMode || (options.isDevelopment && isUserDefinedDev)
-      
+
       if (!shouldEnableDev) return
 
       // 支持自定义 API 端点
