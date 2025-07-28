@@ -9,7 +9,7 @@ export class IconDownloader {
 
   constructor(config: CachedIconConfig = {}) {
     this.config = {
-      isDevelopment: config.isDevelopment || (() => false), // 默认禁用，由调用方决定
+      isDevelopment: () => true,
       cacheExpireTime: config.cacheExpireTime || 24 * 60 * 60 * 1000,
       storageKey: config.storageKey || 'cached-icon-cache-v1',
       downloadApiEndpoint: config.downloadApiEndpoint || '/api/download-icon',

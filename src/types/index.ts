@@ -13,6 +13,8 @@ export interface CachedIconProps {
   showLoadingState?: boolean
   /** 是否显示错误状态 */
   showErrorState?: boolean
+  /** 组件级别的配置 */
+  config?: Partial<CachedIconConfig>
 }
 
 export interface IconDownloadResult {
@@ -75,4 +77,9 @@ export interface IconDownloaderOptions {
   customUrlTemplate?: string
   /** 自定义API端点 */
   apiEndpoint?: string
+  /** 开发环境判断函数 */
+  isDevelopment?: () => boolean
 }
+
+// 插件安装选项接口（为将来扩展预留）
+export type CachedIconInstallOptions = Partial<CachedIconConfig>

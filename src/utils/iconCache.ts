@@ -12,7 +12,7 @@ export class IconCacheManager {
 
   constructor(config: CachedIconConfig = {}) {
     this.config = {
-      isDevelopment: config.isDevelopment || (() => import.meta.env?.DEV ?? false),
+      isDevelopment: () => true, // 默认开发模式
       cacheExpireTime: config.cacheExpireTime || 24 * 60 * 60 * 1000, // 24小时
       storageKey: config.storageKey || 'cached-icon-cache-v1',
       downloadApiEndpoint: config.downloadApiEndpoint || '/api/download-icon',

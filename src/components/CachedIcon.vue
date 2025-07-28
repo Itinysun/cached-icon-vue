@@ -4,6 +4,7 @@ import type { Component, VNode } from 'vue'
 import type { CachedIconProps, CachedIconConfig } from '../types'
 import { iconCache } from '../utils/iconCache'
 import { iconDownloader } from '../utils/iconDownloader'
+import { createPriorityEnvironmentDetector } from '../utils/env'
 import LoadingIcon from './LoadingIcon.vue'
 import ErrorIcon from './ErrorIcon.vue'
 import DefaultIcon from './DefaultIcon.vue'
@@ -49,22 +50,11 @@ const vitePluginConfig =
 
 // 配置对象，合并 Vite 插件配置、全局配置和默认配置
 const config: CachedIconConfig = {
-  isDevelopment:
-    globalConfig.isDevelopment ||
-    vitePluginConfig.isDevelopment ||
-    (() => {
-      // 优先使用 import.meta.env.DEV，如果不存在则检查 NODE_ENV
-      if (typeof import.meta.env?.DEV === 'boolean') {
-        return import.meta.env.DEV
-      }
-      return (
-        import.meta.env?.MODE === 'development' ||
-        (typeof globalThis !== 'undefined' &&
-          (globalThis as { process?: { env?: { NODE_ENV?: string } } }).process?.env?.NODE_ENV ===
-            'development') ||
-        false
-      )
-    }),
+  isDevelopment: createPriorityEnvironmentDetector(
+    props.config?.isDevelopment,
+    globalConfig.isDevelopment,
+    vitePluginConfig.isDevelopment
+  ),
   iconPathPrefix: globalConfig.iconPathPrefix || vitePluginConfig.iconPathPrefix || '/icons',
   downloadApiEndpoint:
     globalConfig.downloadApiEndpoint ||
