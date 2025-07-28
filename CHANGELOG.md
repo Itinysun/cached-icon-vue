@@ -5,6 +5,19 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 并且本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+
+# [1.5.0](https://github.com/Itinysun/cached-icon-vue/compare/v1.4.0...v1.5.0) (2025-07-28)
+
+
+### Bug Fixes
+
+* clean up code formatting and improve readability in env.ts and vite-plugin/index.ts ([56eb28a](https://github.com/Itinysun/cached-icon-vue/commit/56eb28a723f28416071473d44e379d73c2d58b3c))
+
+
+### Features
+
+* Add comprehensive FAQ and troubleshooting documentation for CachedIcon usage ([0306179](https://github.com/Itinysun/cached-icon-vue/commit/0306179009697ba0e4104d52ddb08c6f86ed7476))
+
 # [1.4.0](https://github.com/Itinysun/cached-icon-vue/compare/v1.3.0...v1.4.0) (2025-07-26)
 
 ### Features
