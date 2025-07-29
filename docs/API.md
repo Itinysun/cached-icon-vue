@@ -92,10 +92,7 @@ vitePluginCachedIcon({
 生成图标路径信息。
 
 ```typescript
-function generateIconPath(
-  iconName: string,
-  config?: IconPathConfig
-): IconPathInfo
+function generateIconPath(iconName: string, config?: IconPathConfig): IconPathInfo
 
 interface IconPathConfig {
   iconPathPrefix?: string
@@ -118,19 +115,19 @@ import { generateIconPath } from 'cached-icon-vue'
 const result1 = generateIconPath('mdi:home')
 // {
 //   library: 'mdi',
-//   name: 'home', 
+//   name: 'home',
 //   fileName: 'home.svg',
 //   fullPath: '/icons/mdi-home.svg'
 // }
 
 // 按库分文件夹
 const result2 = generateIconPath('mdi:home', {
-  iconPathPrefix: '/assets/icons'
+  iconPathPrefix: '/assets/icons',
 })
 // {
 //   library: 'mdi',
 //   name: 'home',
-//   fileName: 'home.svg', 
+//   fileName: 'home.svg',
 //   fullPath: '/assets/icons/mdi/home.svg'
 // }
 ```
@@ -151,10 +148,10 @@ function parseIconName(iconName: string): {
 ```typescript
 import { parseIconName } from 'cached-icon-vue'
 
-parseIconName('mdi:home')           // { library: 'mdi', name: 'home' }
-parseIconName('mdi-home')           // { library: 'mdi', name: 'home' } 
+parseIconName('mdi:home') // { library: 'mdi', name: 'home' }
+parseIconName('mdi-home') // { library: 'mdi', name: 'home' }
 parseIconName('heroicons:heart-20-solid') // { library: 'heroicons', name: 'heart-20-solid' }
-parseIconName('custom-icon')        // { library: 'custom', name: 'custom-icon' }
+parseIconName('custom-icon') // { library: 'custom', name: 'custom-icon' }
 ```
 
 ### legacyIconNameToFileName()
@@ -171,5 +168,5 @@ function legacyIconNameToFileName(iconName: string): string
 import { legacyIconNameToFileName } from 'cached-icon-vue'
 
 legacyIconNameToFileName('mdi:home') // 'mdi-home'
-legacyIconNameToFileName('fa:user')  // 'fa-user'
+legacyIconNameToFileName('fa:user') // 'fa-user'
 ```

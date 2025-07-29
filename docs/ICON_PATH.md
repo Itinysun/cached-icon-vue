@@ -13,16 +13,19 @@ cached-icon-vue 提供了统一的图标路径转换系统，支持智能解析�
 #### 支持的格式
 
 **冒号分隔符（推荐）：**
+
 - `mdi:home` → 库: `mdi`, 名称: `home`
 - `heroicons:heart-20-solid` → 库: `heroicons`, 名称: `heart-20-solid`
 - `fa:solid:user` → 库: `fa`, 名称: `solid:user`
 
 **连字符分隔符（向后兼容）：**
+
 - `mdi-home` → 库: `mdi`, 名称: `home`
 - `fa-user` → 库: `fa`, 名称: `user`
 - `heroicons-heart-20-solid` → 库: `heroicons`, 名称: `heart-20-solid`
 
 **自定义图标：**
+
 - `my-custom-icon` → 库: `custom`, 名称: `my-custom-icon`
 
 ### 2. 文件路径生成
@@ -31,30 +34,31 @@ cached-icon-vue 提供了统一的图标路径转换系统，支持智能解析�
 
 #### 按库分文件夹
 
-| 图标名称 | 生成路径 |
-|---------|---------|
-| `mdi:home` | `/icons/mdi/home.svg` |
+| 图标名称                   | 生成路径                              |
+| -------------------------- | ------------------------------------- |
+| `mdi:home`                 | `/icons/mdi/home.svg`                 |
 | `heroicons:heart-20-solid` | `/icons/heroicons/heart-20-solid.svg` |
-| `fa:user` | `/icons/fa/user.svg` |
+| `fa:user`                  | `/icons/fa/user.svg`                  |
 
 ### 3. 安全文件名处理
 
 自动处理文件名中的不安全字符：
 
 | 原字符 | 替换为 |
-|-------|-------|
-| `:` | `-` |
-| `/` | `-` |
-| `\\` | `-` |
-| `<` | `-` |
-| `>` | `-` |
-| `"` | `-` |
-| `|` | `-` |
-| `?` | `-` |
-| `*` | `-` |
-| 空格 | `-` |
+| ------ | ------ | --- |
+| `:`    | `-`    |
+| `/`    | `-`    |
+| `\\`   | `-`    |
+| `<`    | `-`    |
+| `>`    | `-`    |
+| `"`    | `-`    |
+| `      | `      | `-` |
+| `?`    | `-`    |
+| `*`    | `-`    |
+| 空格   | `-`    |
 
 **示例：**
+
 - `test:icon/with<unsafe>chars` → `test-icon-with-unsafe-chars.svg`
 
 ## API 参考
@@ -64,30 +68,29 @@ cached-icon-vue 提供了统一的图标路径转换系统，支持智能解析�
 生成图标路径信息的核心函数。
 
 ```typescript
-function generateIconPath(
-  iconName: string,
-  config?: IconPathConfig
-): IconPathInfo
+function generateIconPath(iconName: string, config?: IconPathConfig): IconPathInfo
 ```
 
 **参数：**
+
 - `iconName`: 图标名称
 - `config`: 可选配置对象
 
 **返回值：**
+
 ```typescript
 interface IconPathInfo {
-  library: string        // 图标库名称
-  name: string          // 图标名称
-  fileName: string      // 文件名
-  fullPath: string      // 完整路径
+  library: string // 图标库名称
+  name: string // 图标名称
+  fileName: string // 文件名
+  fullPath: string // 完整路径
 }
 ```
 
 **示例：**
+
 ```typescript
 import { generateIconPath } from 'cached-icon-vue'
-
 
 // 按库分文件夹
 const result2 = generateIconPath('mdi:home')
@@ -111,6 +114,7 @@ function parseIconName(iconName: string): {
 ```
 
 **示例：**
+
 ```typescript
 import { parseIconName } from 'cached-icon-vue'
 
@@ -133,6 +137,7 @@ function legacyIconNameToFileName(iconName: string): string
 ```
 
 **示例：**
+
 ```typescript
 import { legacyIconNameToFileName } from 'cached-icon-vue'
 
@@ -156,7 +161,7 @@ interface IconPathConfig {
 ```typescript
 // 在 Vue 应用中配置
 app.use(CachedIconVue, {
-  iconPathPrefix: '/assets/icons'
+  iconPathPrefix: '/assets/icons',
 })
 ```
 
@@ -169,9 +174,9 @@ import { vitePluginCachedIcon } from 'cached-icon-vue/vite-plugin'
 export default defineConfig({
   plugins: [
     vitePluginCachedIcon({
-      iconDir: 'public/icons'
-    })
-  ]
+      iconDir: 'public/icons',
+    }),
+  ],
 })
 ```
 
@@ -199,11 +204,13 @@ export default defineConfig({
 ### 1. 选择合适的组织方式
 
 **扁平结构适合：**
+
 - 小型项目
 - 图标数量较少
 - 简单的文件管理需求
 
 **按库分文件夹适合：**
+
 - 大型项目
 - 使用多个图标库
 - 需要更好的文件组织
@@ -211,6 +218,7 @@ export default defineConfig({
 ### 2. 统一命名规范
 
 推荐使用冒号分隔符：
+
 ```typescript
 // 推荐
 <CachedIcon name="mdi:home" />
@@ -227,16 +235,17 @@ export default defineConfig({
 ```typescript
 // vite.config.ts
 vitePluginCachedIcon({
-  iconDir: 'public/icons'
+  iconDir: 'public/icons',
 })
 
 // main.ts
 app.use(CachedIconVue, {
-  iconPathPrefix: '/icons'
+  iconPathPrefix: '/icons',
 })
 ```
 
 ## 迁移指南
+
 ### 自定义路径转换
 
 如果有特殊需求，可以扩展 `generateIconPath` 函数：
@@ -246,15 +255,15 @@ import { generateIconPath, parseIconName } from 'cached-icon-vue'
 
 function customGenerateIconPath(iconName: string) {
   const { library, name } = parseIconName(iconName)
-  
+
   // 自定义逻辑
   const customPath = `/custom-icons/${library}/${name}.svg`
-  
+
   return {
     library,
     name,
     fileName: `${name}.svg`,
-    fullPath: customPath
+    fullPath: customPath,
   }
 }
 ```

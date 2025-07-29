@@ -113,7 +113,7 @@ public/
 
 ```bash
 
-# 图标文件保存位置  
+# 图标文件保存位置
 public/icons/
 ├── mdi/
 │   ├── home.svg
@@ -127,16 +127,18 @@ public/icons/
 ### 配置方法
 
 **Vite 插件配置：**
+
 ```typescript
 vitePluginCachedIcon({
-  iconDir: 'public/icons'   // 图标保存目录
+  iconDir: 'public/icons', // 图标保存目录
 })
 ```
 
 **组件配置：**
+
 ```typescript
 app.use(CachedIconVue, {
-  iconPathPrefix: '/icons'  // 图标路径前缀
+  iconPathPrefix: '/icons', // 图标路径前缀
 })
 ```
 

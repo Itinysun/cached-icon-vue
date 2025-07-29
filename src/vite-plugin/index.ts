@@ -132,13 +132,13 @@ async function processIconRequest(
   }
 
   const iconDir = resolve(root, opts.iconDir)
-  
+
   // 使用统一的路径转换规则（默认使用分文件夹管理）
   const pathInfo = generateIconPath(iconName, {
     iconPathPrefix: '',
     organizeByLibrary: true,
   })
-  
+
   // 构建完整的文件路径
   const iconPath = join(iconDir, pathInfo.fullPath.replace(/^\//, ''))
 

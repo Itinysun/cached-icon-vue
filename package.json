@@ -49,7 +49,7 @@
     "release:dry": "release-it --dry-run",
     "release:ci": "release-it --ci",
     "verify-release": "./scripts/verify-release.sh",
-    "prepublishOnly": "pnpm run clean && pnpm run typecheck && pnpm run lint:check && pnpm run test:run && pnpm run build"
+    "prepublishOnly": "pnpm run clean && pnpm run typecheck && pnpm run lint && pnpm format && pnpm run test:run && pnpm run build"
   },
   "keywords": [
     "vue",

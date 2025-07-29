@@ -45,9 +45,23 @@ export function parseIconName(iconName: string): { library: string; name: string
   // 支持 - 分隔符的传统格式（向后兼容）
   // 查找常见图标库前缀
   const commonLibraries = [
-    'mdi', 'fa', 'fas', 'far', 'fab', 'heroicons', 'lucide', 
-    'tabler', 'feather', 'bootstrap', 'material', 'ant-design',
-    'carbon', 'fluent', 'iconify', 'simple-icons', 'devicons'
+    'mdi',
+    'fa',
+    'fas',
+    'far',
+    'fab',
+    'heroicons',
+    'lucide',
+    'tabler',
+    'feather',
+    'bootstrap',
+    'material',
+    'ant-design',
+    'carbon',
+    'fluent',
+    'iconify',
+    'simple-icons',
+    'devicons',
   ]
 
   for (const lib of commonLibraries) {
@@ -86,12 +100,12 @@ function sanitizeFileName(name: string): string {
  */
 export function generateIconPath(iconName: string, config: IconPathConfig = {}): IconPathInfo {
   const { iconPathPrefix = '/icons', organizeByLibrary = true } = config
-  
+
   const { library, name } = parseIconName(iconName)
   const fileName = `${sanitizeFileName(name)}.svg`
-  
+
   let fullPath: string
-  
+
   if (organizeByLibrary) {
     // 按图标库分文件夹：/icons/mdi/home.svg
     const libraryFolder = sanitizeFileName(library)
@@ -101,7 +115,7 @@ export function generateIconPath(iconName: string, config: IconPathConfig = {}):
     const flatFileName = `${sanitizeFileName(library)}-${sanitizeFileName(name)}.svg`
     fullPath = `${iconPathPrefix}/${flatFileName}`
   }
-  
+
   return {
     library,
     name,
