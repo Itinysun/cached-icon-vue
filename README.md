@@ -39,10 +39,7 @@ import vue from '@vitejs/plugin-vue'
 import { vitePluginCachedIcon } from 'cached-icon-vue/vite-plugin'
 
 export default defineConfig({
-  plugins: [vue(), vitePluginCachedIcon({
-    // 可选：按图标库分文件夹保存（默认：false）
-    organizeByLibrary: false, // true: /icons/mdi/home.svg, false: /icons/mdi-home.svg
-  })],
+  plugins: [vue(), vitePluginCachedIcon()],
 })
 ```
 
@@ -94,9 +91,7 @@ src/
 
 public/
 └── icons/                       // 自动下载的图标,请确保使用GIT进行追踪,以确保生产环境可以直接使用
-    ├── mdi-home.svg            // 默认扁平结构
-    ├── mdi-star.svg
-    └── mdi/                    // 或者按库分文件夹 (organizeByLibrary: true)
+    └── mdi/                    // 按库分文件夹
         ├── home.svg
         ├── star.svg
         └── ...
@@ -114,23 +109,9 @@ public/
 
 ## 文件组织方式
 
-### 扁平结构（默认）
-
-```bash
-organizeByLibrary: false  # 默认设置
-
-# 图标文件保存位置
-public/icons/
-├── mdi-home.svg
-├── mdi-star.svg
-├── heroicons-heart-20-solid.svg
-└── fa-user.svg
-```
-
 ### 按库分文件夹
 
 ```bash
-organizeByLibrary: true  # 启用分文件夹
 
 # 图标文件保存位置  
 public/icons/
@@ -148,7 +129,6 @@ public/icons/
 **Vite 插件配置：**
 ```typescript
 vitePluginCachedIcon({
-  organizeByLibrary: true,  // 启用按库分文件夹
   iconDir: 'public/icons'   // 图标保存目录
 })
 ```
@@ -156,7 +136,6 @@ vitePluginCachedIcon({
 **组件配置：**
 ```typescript
 app.use(CachedIconVue, {
-  organizeByLibrary: true,  // 启用按库分文件夹
   iconPathPrefix: '/icons'  // 图标路径前缀
 })
 ```

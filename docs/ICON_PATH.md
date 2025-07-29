@@ -29,23 +29,7 @@ cached-icon-vue 提供了统一的图标路径转换系统，支持智能解析�
 
 根据配置生成相应的文件路径：
 
-#### 扁平结构（默认）
-
-```typescript
-organizeByLibrary: false
-```
-
-| 图标名称 | 生成路径 |
-|---------|---------|
-| `mdi:home` | `/icons/mdi-home.svg` |
-| `heroicons:heart-20-solid` | `/icons/heroicons-heart-20-solid.svg` |
-| `fa:user` | `/icons/fa-user.svg` |
-
 #### 按库分文件夹
-
-```typescript
-organizeByLibrary: true
-```
 
 | 图标名称 | 生成路径 |
 |---------|---------|
@@ -104,19 +88,9 @@ interface IconPathInfo {
 ```typescript
 import { generateIconPath } from 'cached-icon-vue'
 
-// 扁平结构
-const result1 = generateIconPath('mdi:home')
-// {
-//   library: 'mdi',
-//   name: 'home',
-//   fileName: 'home.svg',
-//   fullPath: '/icons/mdi-home.svg'
-// }
 
 // 按库分文件夹
-const result2 = generateIconPath('mdi:home', {
-  organizeByLibrary: true
-})
+const result2 = generateIconPath('mdi:home')
 // {
 //   library: 'mdi',
 //   name: 'home',
@@ -174,8 +148,6 @@ legacyIconNameToFileName('mdi:home')
 interface IconPathConfig {
   /** 图标文件路径前缀 */
   iconPathPrefix?: string
-  /** 是否按图标库分文件夹保存（默认：false） */
-  organizeByLibrary?: boolean
 }
 ```
 
@@ -184,7 +156,6 @@ interface IconPathConfig {
 ```typescript
 // 在 Vue 应用中配置
 app.use(CachedIconVue, {
-  organizeByLibrary: true,
   iconPathPrefix: '/assets/icons'
 })
 ```
@@ -198,7 +169,6 @@ import { vitePluginCachedIcon } from 'cached-icon-vue/vite-plugin'
 export default defineConfig({
   plugins: [
     vitePluginCachedIcon({
-      organizeByLibrary: true,
       iconDir: 'public/icons'
     })
   ]
@@ -257,50 +227,16 @@ export default defineConfig({
 ```typescript
 // vite.config.ts
 vitePluginCachedIcon({
-  organizeByLibrary: true,
   iconDir: 'public/icons'
 })
 
 // main.ts
 app.use(CachedIconVue, {
-  organizeByLibrary: true,
   iconPathPrefix: '/icons'
 })
 ```
 
 ## 迁移指南
-
-### 从扁平结构迁移到分文件夹
-
-1. 更新配置：
-```typescript
-// 旧配置
-organizeByLibrary: false
-
-// 新配置
-organizeByLibrary: true
-```
-
-2. 重新组织文件：
-```bash
-# 扁平结构
-public/icons/
-├── mdi-home.svg
-├── mdi-star.svg
-└── fa-user.svg
-
-# 迁移后
-public/icons/
-├── mdi/
-│   ├── home.svg
-│   └── star.svg
-└── fa/
-    └── user.svg
-```
-
-3. 清理旧文件：
-删除扁平结构中的旧文件，让系统重新下载到新位置。
-
 ### 自定义路径转换
 
 如果有特殊需求，可以扩展 `generateIconPath` 函数：
@@ -333,7 +269,6 @@ function customGenerateIconPath(iconName: string) {
    - 验证图标名称格式
 
 2. **文件路径不正确**
-   - 检查 `organizeByLibrary` 配置
    - 确认 `iconPathPrefix` 设置
 
 3. **图标库识别错误**
@@ -347,7 +282,5 @@ function customGenerateIconPath(iconName: string) {
 ```typescript
 import { generateIconPath } from 'cached-icon-vue'
 
-console.log(generateIconPath('mdi:home', {
-  organizeByLibrary: true
-}))
+console.log(generateIconPath('mdi:home'))
 ```

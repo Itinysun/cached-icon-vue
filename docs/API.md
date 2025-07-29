@@ -17,7 +17,6 @@ interface CachedIconConfig {
   storageKey?: string
   downloadApiEndpoint?: string
   iconPathPrefix?: string
-  organizeByLibrary?: boolean
 }
 
 interface IconDownloaderOptions {
@@ -25,7 +24,6 @@ interface IconDownloaderOptions {
   iconSource?: 'iconify' | 'custom' // 图标下载源
   customUrlTemplate?: string // 自定义下载URL模板
   apiEndpoint?: string // API端点路径
-  organizeByLibrary?: boolean // 是否按图标库分文件夹保存
 }
 
 interface IconCacheEntry {
@@ -84,7 +82,6 @@ vitePluginCachedIcon({
   iconSource: 'iconify', // 默认: 'iconify'
   customUrlTemplate: '{name}.svg', // 仅当 iconSource 为 'custom' 时使用
   apiEndpoint: '/api/download-icon', // 默认: '/api/download-icon'
-  organizeByLibrary: false, // 默认: false，是否按图标库分文件夹保存
 })
 ```
 
@@ -102,7 +99,6 @@ function generateIconPath(
 
 interface IconPathConfig {
   iconPathPrefix?: string
-  organizeByLibrary?: boolean
 }
 
 interface IconPathInfo {
@@ -129,7 +125,6 @@ const result1 = generateIconPath('mdi:home')
 
 // 按库分文件夹
 const result2 = generateIconPath('mdi:home', {
-  organizeByLibrary: true,
   iconPathPrefix: '/assets/icons'
 })
 // {
