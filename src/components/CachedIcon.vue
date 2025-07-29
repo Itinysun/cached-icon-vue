@@ -80,7 +80,7 @@ const loadIconComponent = async (iconName: string) => {
   try {
     const { fullPath: iconPath } = generateIconPath(iconName, {
       iconPathPrefix: config.iconPathPrefix,
-      organizeByLibrary: config.organizeByLibrary,
+      organizeByLibrary: true,
     })
 
     // 检查缓存
@@ -174,7 +174,7 @@ const getIconFromCache = (name: string): Component | null => {
   // 检查全局svgCache缓存
   const { fullPath: iconPath } = generateIconPath(name, {
     iconPathPrefix: config.iconPathPrefix,
-    organizeByLibrary: config.organizeByLibrary,
+    organizeByLibrary: true,
   })
   if (svgCache.has(iconPath)) {
     const cachedSvg = svgCache.get(iconPath)!
@@ -231,7 +231,7 @@ const loadIcon = async (name: string) => {
       // 将加载到的SVG内容保存到缓存中
       const { fullPath: iconPath } = generateIconPath(name, {
         iconPathPrefix: config.iconPathPrefix,
-        organizeByLibrary: config.organizeByLibrary,
+        organizeByLibrary: true,
       })
       const cachedSvg = svgCache.get(iconPath)
       iconCache.markAsExists(name, cachedSvg)

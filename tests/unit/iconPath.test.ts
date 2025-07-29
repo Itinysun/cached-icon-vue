@@ -60,8 +60,21 @@ describe('iconPath utilities', () => {
   })
 
   describe('generateIconPath', () => {
-    it('should generate flat paths by default', () => {
+    it('should generate organized paths by default', () => {
       const result = generateIconPath('mdi:home')
+
+      expect(result).toEqual({
+        library: 'mdi',
+        name: 'home',
+        fileName: 'home.svg',
+        fullPath: '/icons/mdi/home.svg',
+      })
+    })
+
+    it('should generate flat paths when organizeByLibrary is false', () => {
+      const result = generateIconPath('mdi:home', {
+        organizeByLibrary: false,
+      })
 
       expect(result).toEqual({
         library: 'mdi',
@@ -93,7 +106,7 @@ describe('iconPath utilities', () => {
         library: 'mdi',
         name: 'home',
         fileName: 'home.svg',
-        fullPath: '/assets/icons/mdi-home.svg',
+        fullPath: '/assets/icons/mdi/home.svg',
       })
     })
 
@@ -117,7 +130,7 @@ describe('iconPath utilities', () => {
         library: 'heroicons',
         name: 'outline/heart-20-solid',
         fileName: 'outline-heart-20-solid.svg',
-        fullPath: '/icons/heroicons-outline-heart-20-solid.svg',
+        fullPath: '/icons/heroicons/outline-heart-20-solid.svg',
       })
     })
 

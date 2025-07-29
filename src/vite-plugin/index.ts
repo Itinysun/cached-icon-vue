@@ -1,10 +1,10 @@
-import type { Plugin } from 'vite'
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'
 import { resolve, join, dirname } from 'node:path'
 import type { IconDownloaderOptions } from '../types'
 import { createConfigBridge } from './config-bridge'
 import { createEnvironmentDetector, defaultIsDevelopment } from '../utils/env'
 import { generateIconPath } from '../utils/iconPath'
+import type { VitePluginCompat, Request, RequestResponse } from './types'
 
 const defaultOptions: Required<IconDownloaderOptions> = {
   iconDir: 'public/icons',
@@ -12,13 +12,12 @@ const defaultOptions: Required<IconDownloaderOptions> = {
   customUrlTemplate: '',
   apiEndpoint: '/api/download-icon',
   isDevelopment: defaultIsDevelopment,
-  organizeByLibrary: false,
 }
 
 /**
  * Vite插件：开发模式下提供图标下载API
  */
-export function vitePluginCachedIcon(options: IconDownloaderOptions = {}): Plugin {
+export function vitePluginCachedIcon(options: IconDownloaderOptions = {}): VitePluginCompat {
   const opts = { ...defaultOptions, ...options }
 
   // 创建环境检测器，支持用户自定义检测函数
@@ -61,7 +60,7 @@ export function vitePluginCachedIcon(options: IconDownloaderOptions = {}): Plugi
       if (!shouldEnableDev) return
 
       // 支持自定义 API 端点
-      server.middlewares.use(opts.apiEndpoint, async (req, res) => {
+      server.middlewares.use(opts.apiEndpoint, async (req: Request, res: RequestResponse) => {
         try {
           // 设置CORS头
           res.setHeader('Access-Control-Allow-Origin', '*')
@@ -70,7 +69,7 @@ export function vitePluginCachedIcon(options: IconDownloaderOptions = {}): Plugi
 
           if (req.method === 'OPTIONS') {
             res.statusCode = 200
-            res.end()
+            res.end('')
             return
           }
 
@@ -88,8 +87,8 @@ export function vitePluginCachedIcon(options: IconDownloaderOptions = {}): Plugi
           } else if (req.method === 'POST') {
             // 处理POST请求体
             let body = ''
-            req.on('data', chunk => {
-              body += chunk.toString()
+            req.on('data', (chunk: unknown) => {
+              body += String(chunk)
             })
             req.on('end', async () => {
               try {
@@ -123,7 +122,7 @@ export function vitePluginCachedIcon(options: IconDownloaderOptions = {}): Plugi
 async function processIconRequest(
   iconName: string,
   opts: Required<IconDownloaderOptions>,
-  res: { statusCode: number; end: (data: string) => void },
+  res: RequestResponse,
   root: string
 ) {
   if (!iconName) {
@@ -134,10 +133,10 @@ async function processIconRequest(
 
   const iconDir = resolve(root, opts.iconDir)
   
-  // 使用统一的路径转换规则
+  // 使用统一的路径转换规则（默认使用分文件夹管理）
   const pathInfo = generateIconPath(iconName, {
     iconPathPrefix: '',
-    organizeByLibrary: opts.organizeByLibrary,
+    organizeByLibrary: true,
   })
   
   // 构建完整的文件路径

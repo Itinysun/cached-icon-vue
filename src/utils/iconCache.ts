@@ -18,7 +18,6 @@ export class IconCacheManager {
       storageKey: config.storageKey || 'cached-icon-cache-v1',
       downloadApiEndpoint: config.downloadApiEndpoint || '/api/download-icon',
       iconPathPrefix: config.iconPathPrefix || '/icons',
-      organizeByLibrary: config.organizeByLibrary || false,
     }
 
     this.loadFromStorage()
@@ -276,7 +275,7 @@ export class IconCacheManager {
     for (const [iconName] of existingEntries) {
       const { fullPath: iconPath } = generateIconPath(iconName, {
         iconPathPrefix: this.config.iconPathPrefix,
-        organizeByLibrary: this.config.organizeByLibrary,
+        organizeByLibrary: true,
       })
 
       try {

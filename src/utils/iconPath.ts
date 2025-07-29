@@ -85,7 +85,7 @@ function sanitizeFileName(name: string): string {
  * @returns 图标路径信息
  */
 export function generateIconPath(iconName: string, config: IconPathConfig = {}): IconPathInfo {
-  const { iconPathPrefix = '/icons', organizeByLibrary = false } = config
+  const { iconPathPrefix = '/icons', organizeByLibrary = true } = config
   
   const { library, name } = parseIconName(iconName)
   const fileName = `${sanitizeFileName(name)}.svg`

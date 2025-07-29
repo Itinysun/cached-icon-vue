@@ -65,8 +65,6 @@ export interface CachedIconConfig {
   downloadApiEndpoint?: string
   /** 图标文件路径前缀 */
   iconPathPrefix?: string
-  /** 是否按图标库分文件夹保存（默认：false） */
-  organizeByLibrary?: boolean
 }
 
 // Vite 插件相关类型
@@ -81,8 +79,6 @@ export interface IconDownloaderOptions {
   apiEndpoint?: string
   /** 开发环境判断函数 */
   isDevelopment?: () => boolean
-  /** 是否按图标库分文件夹保存（默认：false） */
-  organizeByLibrary?: boolean
 }
 
 // 插件安装选项接口（为将来扩展预留）
