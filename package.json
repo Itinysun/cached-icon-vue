@@ -73,7 +73,7 @@
   "homepage": "https://github.com/Itinysun/cached-icon-vue#readme",
   "peerDependencies": {
     "vite": "^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0",
-    "vue": "^3.5.0"
+    "vue": "^3.2.0"
   },
   "peerDependenciesMeta": {
     "vite": {
@@ -103,10 +103,6 @@
     "vue-tsc": "^2.1.0"
   },
   "engines": {
-    "node": ">=20.0.0",
-    "pnpm": ">=9.0.0"
-  },
-  "dependencies": {
-    "global": "link:../../../Library/pnpm/global/5/node_modules/global"
+    "node": ">=20.0.0"
   }
 }

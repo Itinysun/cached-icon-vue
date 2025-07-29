@@ -17,6 +17,7 @@ interface CachedIconConfig {
   storageKey?: string
   downloadApiEndpoint?: string
   iconPathPrefix?: string
+  organizeByLibrary?: boolean
 }
 
 interface IconDownloaderOptions {
@@ -24,6 +25,7 @@ interface IconDownloaderOptions {
   iconSource?: 'iconify' | 'custom' // 图标下载源
   customUrlTemplate?: string // 自定义下载URL模板
   apiEndpoint?: string // API端点路径
+  organizeByLibrary?: boolean // 是否按图标库分文件夹保存
 }
 
 interface IconCacheEntry {
@@ -82,5 +84,97 @@ vitePluginCachedIcon({
   iconSource: 'iconify', // 默认: 'iconify'
   customUrlTemplate: '{name}.svg', // 仅当 iconSource 为 'custom' 时使用
   apiEndpoint: '/api/download-icon', // 默认: '/api/download-icon'
+  organizeByLibrary: false, // 默认: false，是否按图标库分文件夹保存
 })
+```
+
+## 图标路径转换工具
+
+### generateIconPath()
+
+生成图标路径信息。
+
+```typescript
+function generateIconPath(
+  iconName: string,
+  config?: IconPathConfig
+): IconPathInfo
+
+interface IconPathConfig {
+  iconPathPrefix?: string
+  organizeByLibrary?: boolean
+}
+
+interface IconPathInfo {
+  library: string
+  name: string
+  fileName: string
+  fullPath: string
+}
+```
+
+**使用示例：**
+
+```typescript
+import { generateIconPath } from 'cached-icon-vue'
+
+// 扁平结构（默认）
+const result1 = generateIconPath('mdi:home')
+// {
+//   library: 'mdi',
+//   name: 'home', 
+//   fileName: 'home.svg',
+//   fullPath: '/icons/mdi-home.svg'
+// }
+
+// 按库分文件夹
+const result2 = generateIconPath('mdi:home', {
+  organizeByLibrary: true,
+  iconPathPrefix: '/assets/icons'
+})
+// {
+//   library: 'mdi',
+//   name: 'home',
+//   fileName: 'home.svg', 
+//   fullPath: '/assets/icons/mdi/home.svg'
+// }
+```
+
+### parseIconName()
+
+解析图标名称，提取图标库和名称。
+
+```typescript
+function parseIconName(iconName: string): {
+  library: string
+  name: string
+}
+```
+
+**使用示例：**
+
+```typescript
+import { parseIconName } from 'cached-icon-vue'
+
+parseIconName('mdi:home')           // { library: 'mdi', name: 'home' }
+parseIconName('mdi-home')           // { library: 'mdi', name: 'home' } 
+parseIconName('heroicons:heart-20-solid') // { library: 'heroicons', name: 'heart-20-solid' }
+parseIconName('custom-icon')        // { library: 'custom', name: 'custom-icon' }
+```
+
+### legacyIconNameToFileName()
+
+向后兼容的文件名转换函数。
+
+```typescript
+function legacyIconNameToFileName(iconName: string): string
+```
+
+**使用示例：**
+
+```typescript
+import { legacyIconNameToFileName } from 'cached-icon-vue'
+
+legacyIconNameToFileName('mdi:home') // 'mdi-home'
+legacyIconNameToFileName('fa:user')  // 'fa-user'
 ```

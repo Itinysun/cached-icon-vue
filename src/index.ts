@@ -12,6 +12,7 @@ export { CachedIcon, LoadingIcon, ErrorIcon, DefaultIcon }
 // 导出工具类和类型
 export { iconCache, IconCacheManager } from './utils/iconCache'
 export { iconDownloader, IconDownloader } from './utils/iconDownloader'
+export { generateIconPath, parseIconName, legacyIconNameToFileName } from './utils/iconPath'
 export {
   defaultIsDevelopment,
   createEnvironmentDetector,
@@ -33,6 +34,7 @@ export type {
   IconDownloaderOptions,
   CachedIconInstallOptions,
 } from './types'
+export type { IconPathConfig, IconPathInfo } from './utils/iconPath'
 export { IconStatus } from './types'
 
 // 插件安装函数

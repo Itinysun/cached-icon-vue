@@ -1,5 +1,6 @@
 import { IconStatus } from '../types'
 import type { IconCacheEntry, IconCacheStats, CachedIconConfig, IconDownloadResult } from '../types'
+import { generateIconPath } from './iconPath'
 
 /**
  * 图标缓存管理器
@@ -17,6 +18,7 @@ export class IconCacheManager {
       storageKey: config.storageKey || 'cached-icon-cache-v1',
       downloadApiEndpoint: config.downloadApiEndpoint || '/api/download-icon',
       iconPathPrefix: config.iconPathPrefix || '/icons',
+      organizeByLibrary: config.organizeByLibrary || false,
     }
 
     this.loadFromStorage()
@@ -272,8 +274,10 @@ export class IconCacheManager {
     )
 
     for (const [iconName] of existingEntries) {
-      const fileName = iconName.replace(/:/g, '-')
-      const iconPath = `${this.config.iconPathPrefix}/${fileName}.svg`
+      const { fullPath: iconPath } = generateIconPath(iconName, {
+        iconPathPrefix: this.config.iconPathPrefix,
+        organizeByLibrary: this.config.organizeByLibrary,
+      })
 
       try {
         const response = await fetch(iconPath)

@@ -1,9 +1,10 @@
 import type { Plugin } from 'vite'
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'
-import { resolve, join } from 'node:path'
+import { resolve, join, dirname } from 'node:path'
 import type { IconDownloaderOptions } from '../types'
 import { createConfigBridge } from './config-bridge'
 import { createEnvironmentDetector, defaultIsDevelopment } from '../utils/env'
+import { generateIconPath } from '../utils/iconPath'
 
 const defaultOptions: Required<IconDownloaderOptions> = {
   iconDir: 'public/icons',
@@ -11,6 +12,7 @@ const defaultOptions: Required<IconDownloaderOptions> = {
   customUrlTemplate: '',
   apiEndpoint: '/api/download-icon',
   isDevelopment: defaultIsDevelopment,
+  organizeByLibrary: false,
 }
 
 /**
@@ -131,9 +133,15 @@ async function processIconRequest(
   }
 
   const iconDir = resolve(root, opts.iconDir)
-  // 将冒号替换为短横线，确保文件名有效
-  const fileName = iconName.replace(/:/g, '-')
-  const iconPath = join(iconDir, `${fileName}.svg`)
+  
+  // 使用统一的路径转换规则
+  const pathInfo = generateIconPath(iconName, {
+    iconPathPrefix: '',
+    organizeByLibrary: opts.organizeByLibrary,
+  })
+  
+  // 构建完整的文件路径
+  const iconPath = join(iconDir, pathInfo.fullPath.replace(/^\//, ''))
 
   // 检查本地是否已存在
   if (existsSync(iconPath)) {
@@ -154,8 +162,9 @@ async function processIconRequest(
   }
 
   // 确保目录存在
-  if (!existsSync(iconDir)) {
-    mkdirSync(iconDir, { recursive: true })
+  const iconDirPath = dirname(iconPath)
+  if (!existsSync(iconDirPath)) {
+    mkdirSync(iconDirPath, { recursive: true })
   }
 
   try {

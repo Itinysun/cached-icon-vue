@@ -12,6 +12,8 @@
 - 📦 **智能下载** - Iconify图标无需安装,开发环境自动下载缺失图标
 - 🔄 **状态管理** - 完善的加载、错误、成功状态管理
 - 🔁 **智能重试** - 失败图标自动重试，确保下载成功
+- 📁 **文件组织** - 支持扁平结构或按图标库分文件夹保存
+- 🔧 **统一转换** - 智能解析图标名称，统一文件路径转换规则
 - 💪 **TypeScript** - 完整的 TypeScript 类型支持
 - 🎨 **主题继承** - 自动继承父元素的颜色样式
 - 🛠️ **灵活配置** - 支持自定义配置和扩展
@@ -37,7 +39,10 @@ import vue from '@vitejs/plugin-vue'
 import { vitePluginCachedIcon } from 'cached-icon-vue/vite-plugin'
 
 export default defineConfig({
-  plugins: [vue(), vitePluginCachedIcon()],
+  plugins: [vue(), vitePluginCachedIcon({
+    // 可选：按图标库分文件夹保存（默认：false）
+    organizeByLibrary: false, // true: /icons/mdi/home.svg, false: /icons/mdi-home.svg
+  })],
 })
 ```
 
@@ -89,9 +94,12 @@ src/
 
 public/
 └── icons/                       // 自动下载的图标,请确保使用GIT进行追踪,以确保生产环境可以直接使用
-    ├── mdi-home.svg
+    ├── mdi-home.svg            // 默认扁平结构
     ├── mdi-star.svg
-    └── ...
+    └── mdi/                    // 或者按库分文件夹 (organizeByLibrary: true)
+        ├── home.svg
+        ├── star.svg
+        └── ...
 ```
 
 ## 支持的图标格式
@@ -103,6 +111,55 @@ public/
 - **Material Design Icons**: `mdi:home`, `mdi:star`, `mdi:heart`
 - **Iconify Collections**: `ic:round-home`, `heroicons:home-20-solid`
 - **自定义图标**: 任何符合文件命名规范的图标名称
+
+## 文件组织方式
+
+### 扁平结构（默认）
+
+```bash
+organizeByLibrary: false  # 默认设置
+
+# 图标文件保存位置
+public/icons/
+├── mdi-home.svg
+├── mdi-star.svg
+├── heroicons-heart-20-solid.svg
+└── fa-user.svg
+```
+
+### 按库分文件夹
+
+```bash
+organizeByLibrary: true  # 启用分文件夹
+
+# 图标文件保存位置  
+public/icons/
+├── mdi/
+│   ├── home.svg
+│   └── star.svg
+├── heroicons/
+│   └── heart-20-solid.svg
+└── fa/
+    └── user.svg
+```
+
+### 配置方法
+
+**Vite 插件配置：**
+```typescript
+vitePluginCachedIcon({
+  organizeByLibrary: true,  // 启用按库分文件夹
+  iconDir: 'public/icons'   // 图标保存目录
+})
+```
+
+**组件配置：**
+```typescript
+app.use(CachedIconVue, {
+  organizeByLibrary: true,  // 启用按库分文件夹
+  iconPathPrefix: '/icons'  // 图标路径前缀
+})
+```
 
 ## 缓存机制
 
@@ -158,7 +215,7 @@ public/
 
 - **Node.js**: >= 20.0.0
 - **pnpm**: >= 9.0.0
-- **Vue**: >= 3.5.0
+- **Vue**: >= 3.2.0
 - **Vite**: >= 4.0.0（支持 4.x、5.x、6.x、7.x）
 
 ## 更多使用方法和示例

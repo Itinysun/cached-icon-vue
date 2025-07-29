@@ -5,6 +5,7 @@ import type { CachedIconProps, CachedIconConfig } from '../types'
 import { iconCache } from '../utils/iconCache'
 import { iconDownloader } from '../utils/iconDownloader'
 import { createPriorityEnvironmentDetector } from '../utils/env'
+import { generateIconPath } from '../utils/iconPath'
 import LoadingIcon from './LoadingIcon.vue'
 import ErrorIcon from './ErrorIcon.vue'
 import DefaultIcon from './DefaultIcon.vue'
@@ -77,8 +78,10 @@ const sizeStyle = computed(() => {
  */
 const loadIconComponent = async (iconName: string) => {
   try {
-    const fileName = iconName.replace(/:/g, '-')
-    const iconPath = `${config.iconPathPrefix}/${fileName}.svg`
+    const { fullPath: iconPath } = generateIconPath(iconName, {
+      iconPathPrefix: config.iconPathPrefix,
+      organizeByLibrary: config.organizeByLibrary,
+    })
 
     // 检查缓存
     if (svgCache.has(iconPath)) {
@@ -169,8 +172,10 @@ const getIconFromCache = (name: string): Component | null => {
   }
 
   // 检查全局svgCache缓存
-  const fileName = name.replace(/:/g, '-')
-  const iconPath = `${config.iconPathPrefix}/${fileName}.svg`
+  const { fullPath: iconPath } = generateIconPath(name, {
+    iconPathPrefix: config.iconPathPrefix,
+    organizeByLibrary: config.organizeByLibrary,
+  })
   if (svgCache.has(iconPath)) {
     const cachedSvg = svgCache.get(iconPath)!
     // 同时更新iconCache
@@ -224,8 +229,10 @@ const loadIcon = async (name: string) => {
     if (component) {
       iconComponent.value = component
       // 将加载到的SVG内容保存到缓存中
-      const fileName = name.replace(/:/g, '-')
-      const iconPath = `${config.iconPathPrefix}/${fileName}.svg`
+      const { fullPath: iconPath } = generateIconPath(name, {
+        iconPathPrefix: config.iconPathPrefix,
+        organizeByLibrary: config.organizeByLibrary,
+      })
       const cachedSvg = svgCache.get(iconPath)
       iconCache.markAsExists(name, cachedSvg)
       return true

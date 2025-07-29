@@ -14,6 +14,7 @@ export class IconDownloader {
       storageKey: config.storageKey || 'cached-icon-cache-v1',
       downloadApiEndpoint: config.downloadApiEndpoint || '/api/download-icon',
       iconPathPrefix: config.iconPathPrefix || '/icons',
+      organizeByLibrary: config.organizeByLibrary || false,
     }
   }
 
