@@ -5,6 +5,14 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 并且本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+
+# [1.6.0](https://github.com/Itinysun/cached-icon-vue/compare/v1.5.0...v1.6.0) (2025-07-29)
+
+
+### Features
+
+* add icon path utility functions for parsing and generating icon paths ([e6dd265](https://github.com/Itinysun/cached-icon-vue/commit/e6dd265fc169ffb6e071fc9dda435f930c079027))
+
 # [1.5.0](https://github.com/Itinysun/cached-icon-vue/compare/v1.4.0...v1.5.0) (2025-07-28)
 
 ### Bug Fixes
